@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function App() {
+const CreateUser = () => {
   const [form, setForm] = useState({ name: "", email: "" });
   const [message, setMessage] = useState("");
 
@@ -44,6 +44,6 @@ function App() {
       <p>{message}</p>
     </div>
   );
-}
+};
 
-export default App;
+export default CreateUser;

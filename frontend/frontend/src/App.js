@@ -1,18 +1,19 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import UsersPage from "./pages/pasindu/UsersPage";
 import Home from "./pages/Home";
+
+import CreateUser from "./pages/pasindu/CreateUser";
+import UserList from "./pages/pasindu/UsersList";
 
 function App() {
   return (
     <div>
-      <nav>
-        <Link to="/">Home</Link> |<Link to="/users">Users</Link>
-      </nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/users" element={<UsersPage />} />
+
+        <Route path="/add-user" element={<CreateUser />} />
+        <Route path="/user-list" element={<UserList />} />
       </Routes>
     </div>
   );
