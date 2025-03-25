@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -23,8 +24,11 @@ const UsersPage = () => {
       ) : (
         <ul>
           {users.map((user) => (
-            <li key={user.id}>
-              <strong>{user.name}</strong> — {user.email}
+            <li key={user.id} style={{ marginBottom: "10px" }}>
+              <strong>{user.name}</strong> — {user.email}{" "}
+              <Link to={`/update/${user.id}`}>
+                <button style={{ marginLeft: "1rem" }}>Edit</button>
+              </Link>
             </li>
           ))}
         </ul>

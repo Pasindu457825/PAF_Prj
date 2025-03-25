@@ -23,4 +23,14 @@ public class UserController {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+    
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable String id, @RequestBody User updatedUser) {
+        return userRepository.findById(id).map(user -> {
+            user.setName(updatedUser.getName());
+            user.setEmail(updatedUser.getEmail());
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    }
+
 }
