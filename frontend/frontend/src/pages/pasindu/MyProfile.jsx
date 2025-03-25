@@ -1,3 +1,4 @@
+import { deleteUserById } from "../pasindu/DeleteUser";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,13 +8,29 @@ const MyProfile = () => {
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
-
     if (!storedUser) {
-      navigate("/login"); // Redirect if not logged in
+      navigate("/login");
     } else {
       setUser(JSON.parse(storedUser));
     }
   }, [navigate]);
+
+  const handleDelete = async () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
+      try {
+        await deleteUserById(user.id);
+        sessionStorage.removeItem("user");
+        navigate("/login");
+      } catch (err) {
+        console.error("Delete failed", err);
+        alert("Failed to delete user ❌");
+      }
+    }
+  };
 
   if (!user) return null;
 
@@ -35,14 +52,30 @@ const MyProfile = () => {
             <strong>Last Name:</strong> {user.lastName}
           </p>
         </div>
+
         <button
-          className="mt-6 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition"
+          className="mt-6 w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md transition"
+          onClick={() => navigate(`/update-user/${user.id}`)}
+        >
+          ✏️ Edit Profile
+        </button>
+
+        <button
+          className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition"
           onClick={() => {
-            sessionStorage.removeItem("user"); // ✅ Clear session
-            navigate("/login"); // 🔁 Redirect to login
+            sessionStorage.removeItem("user");
+            navigate("/login");
           }}
         >
           Logout
+        </button>
+
+        {/* ✅ Delete Button */}
+        <button
+          className="mt-4 w-full bg-gray-800 text-white py-2 rounded-md hover:bg-black transition"
+          onClick={handleDelete}
+        >
+          🗑️ Delete Account
         </button>
       </div>
     </div>

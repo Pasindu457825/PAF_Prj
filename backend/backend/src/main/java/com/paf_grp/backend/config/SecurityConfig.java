@@ -11,15 +11,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // Disable CSRF (you can enable later for better security)
+            .csrf().disable()
             .authorizeHttpRequests()
-                // Allow registration and login endpoints without auth
-                .requestMatchers("/api/users", "/api/auth/**", "/login").permitAll()
-                // Everything else needs authentication
+                .requestMatchers(
+                    "/api/users",                 // POST for registration
+                    "/api/users/update/**",       // ✅ Allow updates
+                    "/api/users/**",              // Optional: allow GET by ID
+                    "/api/auth/**",               // Login
+                    "/login"                      // Login form route
+                ).permitAll()
                 .anyRequest().authenticated()
             .and()
-            .formLogin() // Enable default login form (can be customized later)
-                .loginPage("/login") // optional: define a custom login endpoint
+            .formLogin()
+                .loginPage("/login") // Optional — won't be used if you have custom frontend login
                 .permitAll()
             .and()
             .logout()

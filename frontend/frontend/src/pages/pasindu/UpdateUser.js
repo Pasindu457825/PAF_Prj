@@ -5,7 +5,12 @@ import axios from "axios";
 const UpdateUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+  });
   const [message, setMessage] = useState("");
 
   // Load user data on mount
@@ -13,7 +18,12 @@ const UpdateUser = () => {
     axios.get(`http://localhost:8080/api/users`).then((res) => {
       const user = res.data.find((u) => u.id === id);
       if (user) {
-        setForm({ name: user.name, email: user.email });
+        setForm({
+          username: user.username || "",
+          email: user.email || "",
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
+        });
       }
     });
   }, [id]);
@@ -25,7 +35,11 @@ const UpdateUser = () => {
       .put(`http://localhost:8080/api/users/update/${id}`, form)
       .then(() => {
         setMessage("User updated ✅");
-        setTimeout(() => navigate("/user-list"), 1500);
+
+        // Optionally update stored user info
+        sessionStorage.setItem("user", JSON.stringify({ ...form, id }));
+
+        setTimeout(() => navigate("/myprofile"), 1500);
       })
       .catch((err) => {
         console.error(err);
@@ -35,14 +49,17 @@ const UpdateUser = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 mt-10 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Edit User</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+        Edit Profile
+      </h2>
       <form onSubmit={handleUpdate} className="space-y-4">
         <input
           type="text"
-          placeholder="Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          placeholder="Username"
+          value={form.username}
+          onChange={(e) => setForm({ ...form, username: e.target.value })}
           className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
         />
         <input
           type="email"
@@ -50,12 +67,29 @@ const UpdateUser = () => {
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+        <input
+          type="text"
+          placeholder="First Name"
+          value={form.firstName}
+          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Last Name"
+          value={form.lastName}
+          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
         />
         <button
           type="submit"
           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition duration-150"
         >
-          Update User
+          Update Profile
         </button>
       </form>
       {message && (

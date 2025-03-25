@@ -36,18 +36,13 @@ public class UserController {
     public User updateUser(@PathVariable String id, @RequestBody User updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setEmail(updatedUser.getEmail());
+            user.setUsername(updatedUser.getUsername());
             user.setFirstName(updatedUser.getFirstName());
             user.setLastName(updatedUser.getLastName());
-            user.setUsername(updatedUser.getUsername());
-
-            // Optional: rehash password only if provided
-            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-            }
-
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
     }
+
 
     // Delete User
     @DeleteMapping("/delete/{id}")
