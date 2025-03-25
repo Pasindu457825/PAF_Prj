@@ -24,7 +24,7 @@ public class UserController {
         return userRepository.findAll();
     }
     
-    @PutMapping("update/{id}")
+    @PutMapping("/{id}")
     public User updateUser(@PathVariable String id, @RequestBody User updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setName(updatedUser.getName());
@@ -33,7 +33,7 @@ public class UserController {
         }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
     }
     
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable String id) {
         userRepository.deleteById(id);
         return "User with ID " + id + " has been deleted.";

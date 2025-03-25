@@ -15,7 +15,7 @@ function App() {
 
         <Route path="/add-user" element={<CreateUser />} />
         <Route path="/user-list" element={<UserList />} />
-        <Route path="/update/:id" element={<UpdateUser />} />
+        <Route path="/edit/:id" element={<UpdateUser />} />
       </Routes>
     </div>
   );

@@ -22,10 +22,10 @@ const UpdateUser = () => {
   const handleUpdate = (e) => {
     e.preventDefault();
 
-    axios.put(`http://localhost:8080/api/users/${id}`, form)
+    axios.put(`http://localhost:8080/api/users/update/${id}`, form)
       .then(() => {
         setMessage("User updated ✅");
-        setTimeout(() => navigate("/users"), 1500);
+        setTimeout(() => navigate("/user-list"), 1500);
       })
       .catch((err) => {
         console.error(err);
