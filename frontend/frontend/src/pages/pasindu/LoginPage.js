@@ -3,44 +3,62 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    axios
-      .post("http://localhost:8080/api/users/login", form)
-      .then((res) => {
-        console.log(res.data);
-        setMessage("Login successful ✅");
-        setTimeout(() => navigate("/user-list"), 1500);
-      })
-      .catch((err) => {
-        console.error(err);
-        setMessage("Login failed ❌ Check your credentials");
-      });
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        credentials,
+        {
+          withCredentials: true, // ✅ If using cookies/sessions
+        }
+      );
+
+      console.log("Login Success:", res.data);
+
+      // Example: Save token if returned
+      // localStorage.setItem("token", res.data.token);
+
+      setError("");
+      navigate("/dashboard"); // 🔁 Redirect after login
+    } catch (err) {
+      console.error("Login failed", err);
+      setError("Invalid username or password ❌");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={credentials.username}
+            onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            value={credentials.password}
+            onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -51,15 +69,16 @@ const Login = () => {
             Login
           </button>
         </form>
-        {message && (
-          <p
-            className={`mt-4 text-center font-medium ${
-              message.includes("✅") ? "text-green-600" : "text-red-600"
-            }`}
+        {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Don’t have an account?{" "}
+          <button
+            onClick={() => navigate("/register")}
+            className="text-blue-600 hover:underline"
           >
-            {message}
-          </p>
-        )}
+            Sign up here
+          </button>
+        </p>
       </div>
     </div>
   );
