@@ -22,17 +22,17 @@ const Login = () => {
         "http://localhost:8080/api/auth/login",
         credentials,
         {
-          withCredentials: true, // ✅ If using cookies/sessions
+          withCredentials: true,
         }
       );
 
       console.log("Login Success:", res.data);
 
-      // Example: Save token if returned
-      // localStorage.setItem("token", res.data.token);
+      // ✅ Save to sessionStorage instead of localStorage
+      sessionStorage.setItem("user", JSON.stringify(res.data));
 
       setError("");
-      navigate("/dashboard"); // 🔁 Redirect after login
+      navigate("/myprofile"); // Redirect to profile page
     } catch (err) {
       console.error("Login failed", err);
       setError("Invalid username or password ❌");
