@@ -38,6 +38,15 @@ const MyProfile = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-6 text-center">My Profile</h2>
+        {/* ✅ Show profile image */}
+        {user.profileImage && (
+          <img
+            src={user.profileImage}
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover mx-auto mb-4 shadow-md"
+          />
+        )}
+
         <div className="space-y-2">
           <p>
             <strong>Username:</strong> {user.username}
