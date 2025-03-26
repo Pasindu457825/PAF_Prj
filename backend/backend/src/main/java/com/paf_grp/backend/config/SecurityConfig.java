@@ -11,24 +11,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
+            .csrf().disable()  // Deprecated, consider handling CSRF differently if using Spring Security 6+
             .authorizeHttpRequests()
                 .requestMatchers(
-                    "/api/users",                 // POST for registration
-                    "/api/users/update/**",       // ✅ Allow updates
-                    "/api/users/**",              // Optional: allow GET by ID
-                    "/api/auth/**",               // Login
-                    "/login"                      // Login form route
+                    "/api/users", 
+                    "/api/users/update/**",
+                    "/api/users/**", 
+                    "/api/auth/**", 
+                    "/login"
                 ).permitAll()
                 .anyRequest().authenticated()
             .and()
             .formLogin()
-                .loginPage("/login") // Optional — won't be used if you have custom frontend login
+                .loginPage("/login")
                 .permitAll()
             .and()
             .logout()
-                .permitAll();
-
+                .permitAll()
+            .and()
+            .cors();  // Enable CORS globally
         return http.build();
     }
 }
+

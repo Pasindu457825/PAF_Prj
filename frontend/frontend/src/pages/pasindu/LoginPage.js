@@ -69,7 +69,17 @@ const Login = () => {
             Login
           </button>
         </form>
+
         {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
+
+        {/* Forgot Password Button */}
+        <button
+          onClick={() => navigate("/forgot-password")}
+          className="mt-4 w-full text-blue-600 hover:underline text-sm text-center"
+        >
+          Forgot Password?
+        </button>
+
         <p className="mt-6 text-center text-sm text-gray-500">
           Don’t have an account?{" "}
           <button
