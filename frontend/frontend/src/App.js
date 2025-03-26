@@ -10,6 +10,7 @@ import MyProfile from "./pages/pasindu/MyProfile";
 
 //password
 import ForgotPassword from "./pages/pasindu/reset_password/ForgotPassword"; // Import the page
+import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/myprofile" element={<MyProfile />} />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </BrowserRouter>
     </div>

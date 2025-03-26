@@ -1,25 +1,42 @@
 package com.paf_grp.backend.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.paf_grp.backend.model.pasindu.User;
+import com.paf_grp.backend.repository.pasindu.UserRepository;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 
 @Service
 public class OTPService {
 
     private final JavaMailSender mailSender;
+    private final UserRepository userRepository;
 
-    public OTPService(JavaMailSender mailSender) {
+    // Temporary storage for OTPs (for demonstration purposes)
+    private static final Map<String, String> otpStore = new HashMap<>();
+    private static final Map<String, Long> otpExpiryStore = new HashMap<>(); // Track OTP expiry time
+
+    @Autowired
+    public OTPService(JavaMailSender mailSender, UserRepository userRepository) {
         this.mailSender = mailSender;
+        this.userRepository = userRepository;
     }
 
-    // Method to generate OTP (this can be more complex, like sending an OTP via email)
+    // Generate OTP
     public void generateOTP(String email) {
         String otp = generateRandomOTP();
         sendOtpToEmail(email, otp);
+        otpStore.put(email, otp);
+        otpExpiryStore.put(email, System.currentTimeMillis() + 5 * 60 * 1000); // OTP expiry time: 5 minutes
     }
 
-    // Generate a random OTP (example logic, this can be more sophisticated)
+    // Generate a random OTP (6-digit OTP)
     private String generateRandomOTP() {
         int otp = (int) (Math.random() * 900000) + 100000; // Generates a 6-digit OTP
         return String.valueOf(otp);
@@ -39,5 +56,35 @@ public class OTPService {
             System.out.println("Failed to send OTP: " + e.getMessage());
             throw new RuntimeException("Failed to send OTP");
         }
+    }
+
+    // Verify OTP
+    public boolean verifyOtp(String email, String otp) {
+        // Check if OTP exists and is not expired
+        if (otpStore.containsKey(email)) {
+            if (System.currentTimeMillis() > otpExpiryStore.get(email)) {
+                otpStore.remove(email);
+                otpExpiryStore.remove(email);
+                throw new RuntimeException("OTP expired. Please request a new one.");
+            }
+            // Check if the provided OTP matches the stored OTP
+            if (otp.equals(otpStore.get(email))) {
+                otpStore.remove(email);
+                otpExpiryStore.remove(email);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Reset Password
+    public boolean resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setPassword(newPassword);  // Update the user's password
+            userRepository.save(user);  // Save the updated user
+            return true;
+        }
+        return false;
     }
 }
