@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.paf_grp.backend.model.pasindu.User;
 import com.paf_grp.backend.repository.pasindu.UserRepository;
-import com.paf_grp.backend.service.OTPService;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,41 +24,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private OTPService otpService;
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // ✅ Forgot Password - Generate OTP
-    @PostMapping("/forgot-password")
-    public String forgotPassword(@RequestBody String email) {
-        if (!userRepository.existsByEmail(email)) {
-            return "User with email " + email + " not found.";
-        }
-        otpService.generateOTP(email); // Generate OTP and send it to the email
-        return "OTP sent to " + email;
-    }
-
-    // ✅ Send OTP to user's email
-    @PostMapping("/send-otp")
-    public String sendOtp(@RequestParam String email) {
-        if (!userRepository.existsByEmail(email)) {
-            return "User with email " + email + " not found.";
-        }
-        otpService.generateOTP(email); // Generate OTP and send it to the email
-        return "OTP sent to " + email;
-    }
-
-    // ✅ Verify OTP
-    @PostMapping("/verify-otp")
-    public String verifyOtp(@RequestParam String email, @RequestParam String otp) {
-        if (otpService.validateOTP(email, otp)) {
-            otpService.clearOTP(email); // Clear OTP after successful verification
-            return "OTP verified successfully.";
-        } else {
-            return "Invalid or expired OTP.";
-        }
-    }
 
     // ✅ Create User (with password hashing)
     @PostMapping
