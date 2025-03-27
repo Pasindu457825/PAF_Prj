@@ -32,18 +32,19 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOTPRequest request) {
+    public ResponseEntity<Void> verifyOtp(@RequestBody VerifyOTPRequest request) {
         try {
             boolean isVerified = otpService.verifyOtp(request.getEmail(), request.getOtp());
             if (isVerified) {
-                return ResponseEntity.ok("OTP verified successfully!");
+                return ResponseEntity.ok().build(); // ✅ 200 OK with no message
             } else {
-                return ResponseEntity.status(400).body("Invalid OTP. Please try again.");
+                return ResponseEntity.status(400).build(); // ❌ Invalid OTP
             }
         } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).build(); // Also return 400 for expired/invalid OTP
         }
     }
+
 
     // Endpoint to reset the password
     @PostMapping("/reset-password")

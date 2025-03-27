@@ -19,7 +19,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername());
+        // Use email instead of username
+        User user = userRepository.findByEmailIgnoreCase(loginRequest.getEmail());
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ User not found!");
@@ -32,9 +33,10 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Invalid credentials!");
         }
 
-        // Remove password before returning user object
+        // Hide password before sending user data back
         user.setPassword(null);
 
         return ResponseEntity.ok(user);
     }
+
 }
