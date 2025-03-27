@@ -14,17 +14,19 @@ public class User {
     private String lastName;
     private String username;
     private String password;
+    private String profileImage; // ✅ New field for Firebase photo URL
 
     // Constructors
     public User() {
     }
 
-    public User(String email, String firstName, String lastName, String username, String password) {
+    public User(String email, String firstName, String lastName, String username, String password, String profileImage) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
+        this.profileImage = profileImage;
     }
 
     // Getters & Setters
@@ -74,5 +76,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

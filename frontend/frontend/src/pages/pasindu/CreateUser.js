@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase/FirebaseConfig";
 
 const CreateUser = () => {
   const [form, setForm] = useState({
@@ -10,6 +12,7 @@ const CreateUser = () => {
     username: "",
     password: "",
   });
+  const [photo, setPhoto] = useState(null);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -17,26 +20,44 @@ const CreateUser = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handlePhotoChange = (e) => {
+    setPhoto(e.target.files[0]);
+  };
 
-    axios
-      .post("http://localhost:8080/api/users", form)
-      .then((res) => {
-        console.log(res.data);
-        setMessage("User created successfully ✅");
-        setForm({
-          email: "",
-          firstName: "",
-          lastName: "",
-          username: "",
-          password: "",
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        setMessage("Failed to create user ❌");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage("");
+
+    try {
+      let imageUrl = "";
+
+      // ✅ Upload photo to Firebase if selected
+      if (photo) {
+        const fileRef = ref(
+          storage,
+          `profile-images/${form.username}_${photo.name}`
+        );
+        await uploadBytes(fileRef, photo);
+        imageUrl = await getDownloadURL(fileRef);
+      }
+
+      // ✅ Submit user with profileImage to backend
+      const userData = { ...form, profileImage: imageUrl };
+      await axios.post("http://localhost:8080/api/users", userData);
+
+      setMessage("User created successfully ✅");
+      setForm({
+        email: "",
+        firstName: "",
+        lastName: "",
+        username: "",
+        password: "",
       });
+      setPhoto(null);
+    } catch (err) {
+      console.error("User creation failed:", err);
+      setMessage("Failed to create user ❌");
+    }
   };
 
   return (
@@ -51,7 +72,7 @@ const CreateUser = () => {
             value={form.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md"
           />
           <input
             type="text"
@@ -60,7 +81,7 @@ const CreateUser = () => {
             value={form.firstName}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md"
           />
           <input
             type="text"
@@ -69,7 +90,7 @@ const CreateUser = () => {
             value={form.lastName}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md"
           />
           <input
             type="text"
@@ -78,7 +99,7 @@ const CreateUser = () => {
             value={form.username}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md"
           />
           <input
             type="password"
@@ -87,7 +108,13 @@ const CreateUser = () => {
             value={form.password}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="w-full"
           />
           <button
             type="submit"
@@ -96,6 +123,7 @@ const CreateUser = () => {
             Add User
           </button>
         </form>
+
         {message && (
           <p
             className={`mt-4 text-center font-medium ${
@@ -105,6 +133,7 @@ const CreateUser = () => {
             {message}
           </p>
         )}
+
         <button
           onClick={() => navigate("/login")}
           className="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-md transition"
