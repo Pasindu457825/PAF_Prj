@@ -47,18 +47,22 @@ public class ForgotPasswordController {
 
     // Endpoint to reset the password
     @PostMapping("/reset-password")
-public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
-    try {
-        // Check if newPassword is provided and matches the expected criteria
-        boolean isReset = otpService.resetPassword(request.getEmail(), request.getNewPassword());
-        if (isReset) {
-            return ResponseEntity.ok("Password reset successfully!");
-        } else {
-            return ResponseEntity.status(400).body("Failed to reset password. Please try again.");
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        System.out.println("💬 Received Reset Email: " + request.getEmail());
+
+        try {
+            boolean isReset = otpService.resetPassword(request.getEmail(), request.getNewPassword());
+            if (isReset) {
+                return ResponseEntity.ok("Password reset successfully!");
+            } else {
+                return ResponseEntity.status(400).body("Failed to reset password. Please try again.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error resetting password.");
         }
-    } catch (Exception e) {
-        return ResponseEntity.status(500).body("Error resetting password.");
     }
-}
+
+
 
 }

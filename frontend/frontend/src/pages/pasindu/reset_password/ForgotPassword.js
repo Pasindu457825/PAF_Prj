@@ -32,10 +32,14 @@ const ForgotPassword = () => {
         "http://localhost:8080/api/users/verify-otp",
         { email, otp }
       );
+
       alert(response.data); // OTP verified successfully!
 
-      // Redirect user to reset password page
-      navigate("/reset-password"); // Correct usage of navigate()
+      // ✅ Store verified email in localStorage
+      localStorage.setItem("resetEmail", email.toLowerCase());
+
+      // ✅ Redirect user to reset password page
+      navigate("/reset-password");
     } catch (error) {
       console.error("Error verifying OTP:", error);
       alert("Invalid OTP. Please try again.");
@@ -52,7 +56,9 @@ const ForgotPassword = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
+          style={{ width: "300px" }} // Adjust width as needed
         />
+
         <button type="submit">Send OTP</button>
       </form>
 
