@@ -11,20 +11,15 @@ const ResetPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
     try {
       const response = await axios.post(
         "http://localhost:8080/api/users/reset-password",
-        { email, newPassword } // Send email and newPassword to backend
+        { email, newPassword } // Ensure both email and newPassword are being sent
       );
-      alert(response.data); // Successfully reset password
-      navigate("/login"); // Redirect to login page after successful reset
+      console.log("Password reset successful", response.data);
+      alert("Password reset successfully!");
     } catch (error) {
-      console.error("Error resetting password:", error);
+      console.error("Error resetting password: ", error);
       alert("Failed to reset password. Please try again.");
     }
   };
