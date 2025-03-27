@@ -8,6 +8,10 @@ import UpdateUser from "./pages/pasindu/UpdateUser";
 import Login from "./pages/pasindu/LoginPage";
 import MyProfile from "./pages/pasindu/MyProfile";
 
+//password
+import ForgotPassword from "./pages/pasindu/reset_password/ForgotPassword"; // Import the page
+import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
+
 function App() {
   return (
     <div>
@@ -20,6 +24,9 @@ function App() {
           <Route path="/update-user/:id" element={<UpdateUser />} />
           <Route path="/login" element={<Login />} />
           <Route path="/myprofile" element={<MyProfile />} />
+
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </BrowserRouter>
     </div>
