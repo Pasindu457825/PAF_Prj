@@ -8,7 +8,7 @@ import com.paf_grp.backend.repository.pasindu.UserRepository;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -79,12 +79,17 @@ public class OTPService {
 
     // Reset Password
     public boolean resetPassword(String email, String newPassword) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmailIgnoreCase(email);
         if (user != null) {
-            user.setPassword(newPassword);  // Update the user's password
-            userRepository.save(user);  // Save the updated user
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String hashedPassword = encoder.encode(newPassword);  // ✅ Encrypt
+            user.setPassword(hashedPassword);
+            userRepository.save(user);
             return true;
         }
         return false;
     }
+
+
+
 }
