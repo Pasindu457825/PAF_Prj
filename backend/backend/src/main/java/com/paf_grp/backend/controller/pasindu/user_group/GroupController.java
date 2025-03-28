@@ -109,4 +109,24 @@ public class GroupController {
         return groupService.getGroupsWithPendingRequests(adminEmail);
     }
 
+    @PostMapping("/{groupId}/approve-request")
+    public ResponseEntity<Group> approveRequest(
+            @PathVariable String groupId,
+            @RequestParam String userEmail,
+            @RequestParam String adminEmail
+    ) {
+        Group updated = groupService.approveJoinRequest(groupId, userEmail, adminEmail);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/{groupId}/reject-request")
+    public ResponseEntity<Group> rejectRequest(
+            @PathVariable String groupId,
+            @RequestParam String userEmail,
+            @RequestParam String adminEmail
+    ) {
+        Group updated = groupService.rejectJoinRequest(groupId, userEmail, adminEmail);
+        return ResponseEntity.ok(updated);
+    }
+
 }

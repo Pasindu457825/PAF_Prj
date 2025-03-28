@@ -140,6 +140,38 @@ public class GroupService {
                 .toList();
     }
 
+    // Approve Request
+    public Group approveJoinRequest(String groupId, String userEmail, String adminEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getCreatedBy().equalsIgnoreCase(adminEmail)) {
+            throw new RuntimeException("Only the group creator can approve requests.");
+        }
+
+        if (group.getPendingRequests().contains(userEmail)) {
+            group.getPendingRequests().remove(userEmail);
+            if (!group.getMemberIds().contains(userEmail)) {
+                group.getMemberIds().add(userEmail);
+            }
+        }
+
+        return groupRepository.save(group);
+    }
+
+    // Reject Request
+    public Group rejectJoinRequest(String groupId, String userEmail, String adminEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getCreatedBy().equalsIgnoreCase(adminEmail)) {
+            throw new RuntimeException("Only the group creator can reject requests.");
+        }
+
+        group.getPendingRequests().remove(userEmail);
+
+        return groupRepository.save(group);
+    }
 
 
 }

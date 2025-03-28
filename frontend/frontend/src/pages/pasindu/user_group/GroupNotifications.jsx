@@ -24,6 +24,44 @@ const GroupNotifications = () => {
     }
   };
 
+  const handleApprove = async (groupId, userEmail) => {
+    try {
+      await axios.post(
+        `http://localhost:8080/api/groups/${groupId}/approve-request`,
+        null,
+        {
+          params: {
+            userEmail: userEmail,
+            adminEmail: adminEmail,
+          },
+        }
+      );
+      alert("✅ Request approved.");
+      fetchPendingRequests(adminEmail);
+    } catch (err) {
+      alert("❌ Approval failed: " + err.message);
+    }
+  };
+
+  const handleReject = async (groupId, userEmail) => {
+    try {
+      await axios.post(
+        `http://localhost:8080/api/groups/${groupId}/reject-request`,
+        null,
+        {
+          params: {
+            userEmail: userEmail,
+            adminEmail: adminEmail,
+          },
+        }
+      );
+      alert("🗑️ Request rejected.");
+      fetchPendingRequests(adminEmail);
+    } catch (err) {
+      alert("❌ Rejection failed: " + err.message);
+    }
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4 text-center">🔔 Join Requests</h2>
@@ -37,7 +75,7 @@ const GroupNotifications = () => {
             <ul className="mt-2 list-disc list-inside">
               {group.pendingRequests.map((email) => (
                 <li key={email} className="flex items-center justify-between">
-                  {email}
+                  <span>{email}</span>
                   <div className="space-x-2">
                     <button
                       className="px-2 py-1 bg-green-500 text-white rounded"
@@ -60,46 +98,6 @@ const GroupNotifications = () => {
       )}
     </div>
   );
-
-  async function handleApprove(groupId, userEmail) {
-    try {
-      await axios.post(
-        `http://localhost:8080/api/groups/${groupId}/add-member`,
-        null,
-        {
-          params: {
-            userId: userEmail,
-            actingUserEmail: adminEmail,
-          },
-        }
-      );
-
-      alert("User approved and added.");
-      fetchPendingRequests(adminEmail);
-    } catch (err) {
-      alert("Approval failed: " + err.message);
-    }
-  }
-
-  async function handleReject(groupId, userEmail) {
-    try {
-      await axios.post(
-        `http://localhost:8080/api/groups/${groupId}/reject-request`,
-        null,
-        {
-          params: {
-            userEmail: userEmail,
-            adminEmail: adminEmail,
-          },
-        }
-      );
-
-      alert("Request rejected.");
-      fetchPendingRequests(adminEmail);
-    } catch (err) {
-      alert("Rejection failed: " + err.message);
-    }
-  }
 };
 
 export default GroupNotifications;
