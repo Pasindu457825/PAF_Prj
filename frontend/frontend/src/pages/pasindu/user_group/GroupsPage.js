@@ -4,7 +4,12 @@ import axios from "axios";
 
 const GroupsPage = () => {
   const [groups, setGroups] = useState([]);
-  const [newGroup, setNewGroup] = useState({ name: "", description: "" });
+  const [newGroup, setNewGroup] = useState({
+    name: "",
+    description: "",
+    isPrivate: false, // ✅ Add this
+  });
+
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -16,7 +21,7 @@ const GroupsPage = () => {
     } else {
       const userObj = JSON.parse(storedUser);
       setUser(userObj);
-      fetchUserGroups(userObj.email); // ✅ pass email here
+      fetchUserGroups(userObj.email);
     }
   }, [navigate]);
 
@@ -24,12 +29,9 @@ const GroupsPage = () => {
     try {
       const response = await axios.get("http://localhost:8080/api/groups");
       const allGroups = response.data;
-
-      // ✅ Filter groups created by this user
       const userGroups = allGroups.filter(
         (group) => group.createdBy === userEmail
       );
-
       setGroups(userGroups);
     } catch (err) {
       console.error("Failed to fetch groups:", err);
@@ -46,10 +48,11 @@ const GroupsPage = () => {
         name: newGroup.name,
         description: newGroup.description,
         creatorEmail: user.email,
+        isPrivate: newGroup.isPrivate, // ✅ send to backend
       });
 
       setGroups([...groups, response.data]);
-      setNewGroup({ name: "", description: "" });
+      setNewGroup({ name: "", description: "", isPrivate: false });
       setMessage("✅ Group created successfully");
     } catch (err) {
       console.error("Group creation failed:", err);
@@ -85,6 +88,20 @@ const GroupsPage = () => {
             }
             className="w-full px-4 py-2 border rounded-md mb-2"
           ></textarea>
+
+          {/* ✅ Private checkbox */}
+          <label className="flex items-center space-x-2 text-sm mb-2">
+            <input
+              type="checkbox"
+              checked={newGroup.isPrivate}
+              onChange={(e) =>
+                setNewGroup({ ...newGroup, isPrivate: e.target.checked })
+              }
+            />
+
+            <span>Make this group private 🔒</span>
+          </label>
+
           <button
             type="button"
             onClick={handleCreateGroup}
@@ -120,6 +137,9 @@ const GroupsPage = () => {
                 >
                   <h4 className="text-lg font-semibold text-blue-700">
                     {group.name}
+                    {group.isPrivate && (
+                      <span className="ml-2 text-sm text-purple-600">🔒</span>
+                    )}
                   </h4>
                   <p className="text-gray-600">{group.description}</p>
                   <p className="text-xs text-gray-500 mt-1">

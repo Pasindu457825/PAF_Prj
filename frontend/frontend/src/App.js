@@ -16,6 +16,8 @@ import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
 //gropus
 import GroupsPage from "./pages/pasindu/user_group/GroupsPage";
 import GroupDetailPage from "./pages/pasindu/user_group/GroupDetailPage";
+import ViewGroupsPage from "./pages/pasindu/user_group/ViewGroupsPage";
+
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
           {/* group */}
           <Route path="/groups/:userId" element={<GroupsPage />} />
           <Route path="/groups/view/:groupId" element={<GroupDetailPage />} />
+          <Route path="/groups/view" element={<ViewGroupsPage />} />
+
         </Routes>
       </BrowserRouter>
     </div>

@@ -15,22 +15,21 @@ public class Group {
 
     private String name;
     private String description;
-
-    private String createdBy; // ✅ Store creator's email
-
-    private List<String> memberIds = new ArrayList<>(); // ✅ Store User IDs of group members
-
+    private String createdBy; // ✅ Creator's email
+    private List<String> memberIds = new ArrayList<>(); // ✅ Store member emails
+    private boolean isPrivate = false; // ✅ NEW: Default to public
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Constructors
     public Group() {
     }
 
-    public Group(String name, String description, String createdBy, List<String> memberIds) {
+    public Group(String name, String description, String createdBy, List<String> memberIds, boolean isPrivate) {
         this.name = name;
         this.description = description;
         this.createdBy = createdBy;
         this.memberIds = memberIds;
+        this.isPrivate = isPrivate;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -73,6 +72,14 @@ public class Group {
 
     public void setMemberIds(List<String> memberIds) {
         this.memberIds = memberIds;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
     }
 
     public LocalDateTime getCreatedAt() {

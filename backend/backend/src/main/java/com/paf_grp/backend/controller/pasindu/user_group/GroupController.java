@@ -1,11 +1,11 @@
 package com.paf_grp.backend.controller.pasindu.user_group;
 
 import com.paf_grp.backend.model.pasindu.user_group.Group;
-import com.paf_grp.backend.service.pasindu.GroupService;
 import com.paf_grp.backend.model.pasindu.user_group.GroupRequest;
+import com.paf_grp.backend.service.pasindu.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,21 +16,22 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    // ✅ Create Group
+    // ✅ Create Group (calls service method)
     @PostMapping
-    public ResponseEntity<?> createGroup(@RequestBody GroupRequest request) {
+    public ResponseEntity<Group> createGroup(@RequestBody GroupRequest request) {
         if (request.getName() == null || request.getCreatorEmail() == null) {
-            return ResponseEntity.badRequest().body("Missing required fields");
+            return ResponseEntity.badRequest().build();
         }
 
         Group newGroup = groupService.createGroup(
                 request.getName(),
                 request.getDescription(),
-                request.getCreatorEmail()
+                request.getCreatorEmail(),
+                request.getIsPrivate() // ✅ Pass privacy option
         );
+
         return ResponseEntity.ok(newGroup);
     }
-
 
     // ✅ Get All Groups
     @GetMapping
@@ -64,13 +65,11 @@ public class GroupController {
         return groupService.removeMember(groupId, userId, actingUserEmail);
     }
 
-
-    // ✅ Get All Groups for a User
+    // ✅ Get Groups for User
     @GetMapping("/user/{userId}")
     public List<Group> getGroupsByUserId(@PathVariable String userId) {
         return groupService.getGroupsByUserId(userId);
     }
-
 
     // ✅ Delete Group
     @DeleteMapping("/delete/{id}")

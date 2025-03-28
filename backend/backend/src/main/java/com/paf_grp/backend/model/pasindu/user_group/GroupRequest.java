@@ -4,8 +4,8 @@ public class GroupRequest {
     private String name;
     private String description;
     private String creatorEmail;
+    private boolean isPrivate;
 
-    // Getters and Setters
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -14,4 +14,8 @@ public class GroupRequest {
 
     public String getCreatorEmail() { return creatorEmail; }
     public void setCreatorEmail(String creatorEmail) { this.creatorEmail = creatorEmail; }
+
+    public boolean getIsPrivate() { return isPrivate; } // ✅
+    public void setIsPrivate(boolean isPrivate) { this.isPrivate = isPrivate; } // ✅
 }
+

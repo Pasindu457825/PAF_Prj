@@ -19,7 +19,7 @@ public class GroupService {
     private UserRepository userRepository;
 
     // ✅ Create a group
-    public Group createGroup(String name, String description, String creatorEmail) {
+    public Group createGroup(String name, String description, String creatorEmail, boolean isPrivate) {
         User creator = userRepository.findByEmailIgnoreCase(creatorEmail);
         if (creator == null) {
             throw new RuntimeException("Creator not found");
@@ -29,15 +29,12 @@ public class GroupService {
         group.setName(name);
         group.setDescription(description);
         group.setCreatedBy(creator.getEmail());
-
-        // ✅ Make sure ONLY this line exists:
-        group.getMemberIds().add(creator.getEmail());
-
-        // 🔥 Double check: REMOVE this if it exists anywhere
-        // group.getMemberIds().add(creator.getId());
+        group.setPrivate(isPrivate); // ✅ new field
+        group.getMemberIds().add(creator.getEmail()); // add creator as first member
 
         return groupRepository.save(group);
     }
+
 
 
 
