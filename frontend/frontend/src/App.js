@@ -17,7 +17,7 @@ import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
 import GroupsPage from "./pages/pasindu/user_group/GroupsPage";
 import GroupDetailPage from "./pages/pasindu/user_group/GroupDetailPage";
 import ViewGroupsPage from "./pages/pasindu/user_group/ViewGroupsPage";
-
+import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 
 function App() {
   return (
@@ -41,6 +41,7 @@ function App() {
           <Route path="/groups/:userId" element={<GroupsPage />} />
           <Route path="/groups/view/:groupId" element={<GroupDetailPage />} />
           <Route path="/groups/view" element={<ViewGroupsPage />} />
+          <Route path="/notifications" element={<GroupNotifications />} />
 
         </Routes>
       </BrowserRouter>

@@ -17,7 +17,8 @@ public class Group {
     private String description;
     private String createdBy; // ✅ Creator's email
     private List<String> memberIds = new ArrayList<>(); // ✅ Store member emails
-    private boolean isPrivate = false; // ✅ NEW: Default to public
+    private List<String> pendingRequests = new ArrayList<>(); // ✅ NEW: pending join requests
+    private boolean isPrivate = false; // ✅ Default to public
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Constructors
@@ -31,6 +32,7 @@ public class Group {
         this.memberIds = memberIds;
         this.isPrivate = isPrivate;
         this.createdAt = LocalDateTime.now();
+        this.pendingRequests = new ArrayList<>();
     }
 
     // Getters & Setters
@@ -72,6 +74,14 @@ public class Group {
 
     public void setMemberIds(List<String> memberIds) {
         this.memberIds = memberIds;
+    }
+
+    public List<String> getPendingRequests() {
+        return pendingRequests;
+    }
+
+    public void setPendingRequests(List<String> pendingRequests) {
+        this.pendingRequests = pendingRequests;
     }
 
     public boolean isPrivate() {

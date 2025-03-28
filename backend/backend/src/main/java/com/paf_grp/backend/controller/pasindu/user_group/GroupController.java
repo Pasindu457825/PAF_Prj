@@ -91,4 +91,22 @@ public class GroupController {
         }
     }
 
+    @PostMapping("/{groupId}/request")
+    public ResponseEntity<Group> requestToJoinPrivateGroup(
+            @PathVariable String groupId,
+            @RequestParam String userEmail
+    ) {
+        try {
+            Group updatedGroup = groupService.requestToJoinPrivateGroup(groupId, userEmail);
+            return ResponseEntity.ok(updatedGroup);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @GetMapping("/admin/{adminEmail}/pending-requests")
+    public List<Group> getPendingJoinRequestsForAdmin(@PathVariable String adminEmail) {
+        return groupService.getGroupsWithPendingRequests(adminEmail);
+    }
+
 }

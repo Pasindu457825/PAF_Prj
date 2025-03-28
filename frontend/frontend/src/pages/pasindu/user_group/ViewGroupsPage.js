@@ -23,27 +23,34 @@ const ViewGroupsPage = () => {
     }
   };
 
-  const handleJoinRequest = async (groupId) => {
+  const handleJoinRequest = async (group) => {
     if (!user?.email) return alert("User not logged in");
 
     try {
-      const response = await axios.post(
-        `http://localhost:8080/api/groups/${groupId}/join`,
-        null,
-        {
-          params: {
-            userEmail: user.email,
-          },
-        }
-      );
-
-      alert("Joined the group successfully!");
-      fetchGroups(); // refresh list to reflect change
-    } catch (error) {
-      alert(
-        "Failed to join group: " + error.response?.data?.message ||
-          error.message
-      );
+      if (group.private) {
+        // Request to join private group
+        await axios.post(
+          `http://localhost:8080/api/groups/${group.id}/request`,
+          null,
+          {
+            params: { userEmail: user.email },
+          }
+        );
+        alert("Join request sent to admin!");
+      } else {
+        // Join public group directly
+        await axios.post(
+          `http://localhost:8080/api/groups/${group.id}/join`,
+          null,
+          {
+            params: { userEmail: user.email },
+          }
+        );
+        alert("Joined group successfully!");
+      }
+      fetchGroups(); // Refresh UI
+    } catch (err) {
+      alert("Error: " + err.response?.data?.message || err.message);
     }
   };
 
@@ -84,9 +91,16 @@ const ViewGroupsPage = () => {
                   >
                     Joined ✅
                   </button>
+                ) : group.pendingRequests?.includes(user?.email) ? (
+                  <button
+                    className="mt-2 px-4 py-1 bg-yellow-500 text-white rounded cursor-default"
+                    disabled
+                  >
+                    Requested 🕒
+                  </button>
                 ) : (
                   <button
-                    onClick={() => handleJoinRequest(group.id)}
+                    onClick={() => handleJoinRequest(group)}
                     className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                   >
                     {group.private ? "Request to Join 🔒" : "Join Group"}

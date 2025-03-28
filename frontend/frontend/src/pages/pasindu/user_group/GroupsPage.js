@@ -7,7 +7,7 @@ const GroupsPage = () => {
   const [newGroup, setNewGroup] = useState({
     name: "",
     description: "",
-    isPrivate: false, // ✅ Add this
+    isPrivate: false,
   });
 
   const [message, setMessage] = useState("");
@@ -48,7 +48,7 @@ const GroupsPage = () => {
         name: newGroup.name,
         description: newGroup.description,
         creatorEmail: user.email,
-        isPrivate: newGroup.isPrivate, // ✅ send to backend
+        isPrivate: newGroup.isPrivate,
       });
 
       setGroups([...groups, response.data]);
@@ -98,7 +98,6 @@ const GroupsPage = () => {
                 setNewGroup({ ...newGroup, isPrivate: e.target.checked })
               }
             />
-
             <span>Make this group private 🔒</span>
           </label>
 
@@ -121,6 +120,16 @@ const GroupsPage = () => {
             {message}
           </p>
         )}
+
+        {/* 🔔 Notification Button for Join Requests */}
+        <div className="mb-4 text-center">
+          <button
+            onClick={() => navigate("/notifications")}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition"
+          >
+            🔔 View Join Requests
+          </button>
+        </div>
 
         {/* 📋 Group List */}
         <div>

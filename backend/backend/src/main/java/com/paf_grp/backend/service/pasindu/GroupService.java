@@ -112,4 +112,34 @@ public class GroupService {
         return groupRepository.save(group);
     }
 
+    public Group requestToJoinPrivateGroup(String groupId, String userEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.isPrivate()) {
+            throw new RuntimeException("Group is public. No need to request.");
+        }
+
+        if (group.getMemberIds().contains(userEmail)) {
+            throw new RuntimeException("User is already a member.");
+        }
+
+        if (!group.getPendingRequests().contains(userEmail)) {
+            group.getPendingRequests().add(userEmail);
+        }
+
+        // TODO: Notify the admin (group.getCreatedBy()) - email or dashboard notification
+
+        return groupRepository.save(group);
+    }
+
+    public List<Group> getGroupsWithPendingRequests(String adminEmail) {
+        return groupRepository.findAll().stream()
+                .filter(group -> group.getCreatedBy().equalsIgnoreCase(adminEmail))
+                .filter(group -> group.getPendingRequests() != null && !group.getPendingRequests().isEmpty())
+                .toList();
+    }
+
+
+
 }
