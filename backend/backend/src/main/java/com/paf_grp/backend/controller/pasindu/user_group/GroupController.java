@@ -77,4 +77,18 @@ public class GroupController {
         groupService.deleteGroup(id);
         return "Group with ID " + id + " has been deleted.";
     }
+
+    @PostMapping("/{groupId}/join")
+    public ResponseEntity<Group> joinPublicGroup(
+            @PathVariable String groupId,
+            @RequestParam String userEmail
+    ) {
+        try {
+            Group updatedGroup = groupService.joinPublicGroup(groupId, userEmail);
+            return ResponseEntity.ok(updatedGroup);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }

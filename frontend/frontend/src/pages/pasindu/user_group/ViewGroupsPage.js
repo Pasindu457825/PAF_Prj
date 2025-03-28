@@ -23,9 +23,28 @@ const ViewGroupsPage = () => {
     }
   };
 
-  const handleJoinRequest = (groupId) => {
-    alert(`Join request sent for group ${groupId} (implement logic)`);
-    // In next step, you can send request to backend.
+  const handleJoinRequest = async (groupId) => {
+    if (!user?.email) return alert("User not logged in");
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/groups/${groupId}/join`,
+        null,
+        {
+          params: {
+            userEmail: user.email,
+          },
+        }
+      );
+
+      alert("Joined the group successfully!");
+      fetchGroups(); // refresh list to reflect change
+    } catch (error) {
+      alert(
+        "Failed to join group: " + error.response?.data?.message ||
+          error.message
+      );
+    }
   };
 
   return (
@@ -58,7 +77,14 @@ const ViewGroupsPage = () => {
                   Created by: {group.createdBy}
                 </p>
 
-                {!group.memberIds.includes(user?.email) && (
+                {group.memberIds.includes(user?.email) ? (
+                  <button
+                    className="mt-2 px-4 py-1 bg-green-600 text-white rounded cursor-default"
+                    disabled
+                  >
+                    Joined ✅
+                  </button>
+                ) : (
                   <button
                     onClick={() => handleJoinRequest(group.id)}
                     className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"

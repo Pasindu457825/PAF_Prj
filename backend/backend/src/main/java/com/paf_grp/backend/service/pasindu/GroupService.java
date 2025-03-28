@@ -96,4 +96,20 @@ public class GroupService {
     public void deleteGroup(String id) {
         groupRepository.deleteById(id);
     }
+
+    public Group joinPublicGroup(String groupId, String userEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (group.isPrivate()) {
+            throw new RuntimeException("Cannot join a private group directly.");
+        }
+
+        if (!group.getMemberIds().contains(userEmail)) {
+            group.getMemberIds().add(userEmail);
+        }
+
+        return groupRepository.save(group);
+    }
+
 }
