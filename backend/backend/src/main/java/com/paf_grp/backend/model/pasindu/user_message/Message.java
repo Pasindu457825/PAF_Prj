@@ -16,16 +16,18 @@ public class Message {
     private String senderEmail;
     private String senderName; // ✅ NEW FIELD for display
     private String content;
+    private String Image;
     private LocalDateTime timestamp = LocalDateTime.now();
 
     public Message() {
     }
 
-    public Message(String groupId, String senderEmail, String senderName, String content) {
+    public Message(String groupId, String senderEmail, String senderName, String content, String Image) {
         this.groupId = groupId;
         this.senderEmail = senderEmail;
         this.senderName = senderName;
         this.content = content;
+        this.Image = Image;
     }
 
     // Getters & Setters
@@ -51,6 +53,10 @@ public class Message {
 
     public String getContent() {
         return content;
+    }
+
+    public String getImage() {
+        return Image;
     }
 
     public LocalDateTime getTimestamp() {
@@ -80,6 +86,11 @@ public class Message {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public void setImage(String image) {
+        this.Image = image;
+    }
+
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
