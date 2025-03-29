@@ -85,12 +85,21 @@ const ViewGroupsPage = () => {
                 </p>
 
                 {group.memberIds.includes(user?.email) ? (
-                  <button
-                    className="mt-2 px-4 py-1 bg-green-600 text-white rounded cursor-default"
-                    disabled
-                  >
-                    Joined ✅
-                  </button>
+                  <div className="mt-2 space-y-2">
+                    <button
+                      className="px-4 py-1 bg-green-600 text-white rounded cursor-default"
+                      disabled
+                    >
+                      Joined ✅
+                    </button>
+                    <br />
+                    <a
+                      href={`/groups/chat/${group.id}`}
+                      className="inline-block px-4 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+                    >
+                      Go to Chat 💬
+                    </a>
+                  </div>
                 ) : group.pendingRequests?.includes(user?.email) ? (
                   <button
                     className="mt-2 px-4 py-1 bg-yellow-500 text-white rounded cursor-default"
