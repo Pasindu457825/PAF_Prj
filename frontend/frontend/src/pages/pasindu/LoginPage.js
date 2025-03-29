@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
-    username: "",
+    email: "",
     password: "",
   });
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -27,15 +27,26 @@ const Login = () => {
       );
 
       console.log("Login Success:", res.data);
-
-      // ✅ Save to sessionStorage instead of localStorage
       sessionStorage.setItem("user", JSON.stringify(res.data));
 
-      setError("");
-      navigate("/myprofile"); // Redirect to profile page
+      // ✅ SweetAlert for success
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "Welcome back!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      navigate("/myprofile");
     } catch (err) {
       console.error("Login failed", err);
-      setError("Invalid username or password ❌");
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: "Invalid email or password ❌",
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
@@ -45,10 +56,10 @@ const Login = () => {
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={credentials.username}
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={credentials.email}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -70,9 +81,6 @@ const Login = () => {
           </button>
         </form>
 
-        {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
-
-        {/* Forgot Password Button */}
         <button
           onClick={() => navigate("/forgot-password")}
           className="mt-4 w-full text-blue-600 hover:underline text-sm text-center"
