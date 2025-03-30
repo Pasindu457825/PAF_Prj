@@ -6,6 +6,7 @@ import com.paf_grp.backend.service.pasindu.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 import java.util.List;
 
@@ -128,5 +129,21 @@ public class GroupController {
         Group updated = groupService.rejectJoinRequest(groupId, userEmail, adminEmail);
         return ResponseEntity.ok(updated);
     }
+
+    // ✅ Endpoint: User leaves the group
+    @PostMapping("/{groupId}/leave")
+    public ResponseEntity<?> leaveGroup(
+            @PathVariable String groupId,
+            @RequestParam String userEmail
+    ) {
+        try {
+            Group updatedGroup = groupService.leaveGroup(groupId, userEmail);
+            return ResponseEntity.ok(updatedGroup);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+
 
 }
