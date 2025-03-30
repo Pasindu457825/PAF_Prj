@@ -63,10 +63,29 @@ const GroupDetailPage = () => {
 
       setMessage("✅ Member added successfully");
       setSelectedUserId("");
-      loadGroupAndUsers(user); // Reload group and members
+      loadGroupAndUsers(user);
     } catch (err) {
       console.error("Failed to add member:", err);
       setMessage("❌ Failed to add member");
+    }
+  };
+
+  const handleRemoveMember = async (userEmailToRemove) => {
+    try {
+      await axios.delete(
+        `http://localhost:8080/api/groups/${groupId}/remove-member`,
+        {
+          params: {
+            userId: userEmailToRemove,
+            actingUserEmail: user.email,
+          },
+        }
+      );
+      setMessage("🗑️ Member removed");
+      loadGroupAndUsers(user);
+    } catch (err) {
+      console.error("Failed to remove member:", err);
+      setMessage("❌ Failed to remove member");
     }
   };
 
@@ -86,6 +105,7 @@ const GroupDetailPage = () => {
         <h2 className="text-2xl font-bold mb-2">{group.name}</h2>
         <p className="text-gray-600 mb-4">{group.description}</p>
 
+        {/* Add Member */}
         {user?.email === group.createdBy && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">➕ Add Member</h3>
@@ -96,7 +116,7 @@ const GroupDetailPage = () => {
             >
               <option value="">-- Select a user --</option>
               {allUsers
-                .filter((u) => !group.memberIds.includes(u.email)) // ✅ Use email
+                .filter((u) => !group.memberIds.includes(u.email))
                 .map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.username} ({user.email})
@@ -112,7 +132,9 @@ const GroupDetailPage = () => {
             {message && (
               <p
                 className={`mt-2 text-sm text-center font-medium ${
-                  message.includes("✅") ? "text-green-600" : "text-red-600"
+                  message.includes("✅") || message.includes("🗑️")
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {message}
@@ -121,6 +143,7 @@ const GroupDetailPage = () => {
           </div>
         )}
 
+        {/* Member List */}
         <h3 className="text-lg font-semibold mb-2">👥 Members</h3>
         {members.length === 0 ? (
           <p className="text-gray-500">No members in this group.</p>
@@ -142,6 +165,17 @@ const GroupDetailPage = () => {
                   </p>
                   <p className="text-sm text-gray-500">{member.email}</p>
                 </div>
+
+                {/* Remove Button (only visible to admin, and can't remove self) */}
+                {user?.email === group.createdBy &&
+                  member.email !== group.createdBy && (
+                    <button
+                      onClick={() => handleRemoveMember(member.email)}
+                      className="mt-2 sm:mt-0 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    >
+                      Remove
+                    </button>
+                  )}
               </li>
             ))}
           </ul>

@@ -154,6 +154,12 @@ const GroupsPage = () => {
                   <p className="text-xs text-gray-500 mt-1">
                     Created by: {group.createdBy}
                   </p>
+                  <button
+                    onClick={() => navigate(`/groups/chat/${group.id}`)}
+                    className="text-blue-600 underline text-sm"
+                  >
+                    Go to Group Chat 💬
+                  </button>
                 </li>
               ))}
             </ul>
