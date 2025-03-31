@@ -173,5 +173,23 @@ public class GroupService {
         return groupRepository.save(group);
     }
 
+    // ✅ User leaves a group
+    public Group leaveGroup(String groupId, String userEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getMemberIds().contains(userEmail)) {
+            throw new RuntimeException("User is not a member of this group");
+        }
+
+        // Prevent creator from leaving their own group (optional)
+        if (group.getCreatedBy().equalsIgnoreCase(userEmail)) {
+            throw new RuntimeException("Group creator cannot leave their own group");
+        }
+
+        group.getMemberIds().remove(userEmail);
+        return groupRepository.save(group);
+    }
+
 
 }
