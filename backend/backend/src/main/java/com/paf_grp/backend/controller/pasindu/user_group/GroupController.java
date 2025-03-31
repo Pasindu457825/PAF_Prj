@@ -73,11 +73,19 @@ public class GroupController {
     }
 
     // ✅ Delete Group
-    @DeleteMapping("/delete/{id}")
-    public String deleteGroup(@PathVariable String id) {
-        groupService.deleteGroup(id);
-        return "Group with ID " + id + " has been deleted.";
+    @DeleteMapping("/delete/{groupId}")
+    public ResponseEntity<?> deleteGroup(
+            @PathVariable String groupId,
+            @RequestParam String userEmail
+    ) {
+        try {
+            groupService.deleteGroup(groupId, userEmail);
+            return ResponseEntity.ok(Map.of("message", "Group deleted successfully."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
     }
+
 
     @PostMapping("/{groupId}/join")
     public ResponseEntity<Group> joinPublicGroup(

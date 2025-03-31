@@ -93,9 +93,17 @@ public class GroupService {
     }
 
     // ✅ Delete group by ID
-    public void deleteGroup(String id) {
-        groupRepository.deleteById(id);
+    public void deleteGroup(String groupId, String requestingUserEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getCreatedBy().equalsIgnoreCase(requestingUserEmail)) {
+            throw new RuntimeException("Only the group creator can delete the group");
+        }
+
+        groupRepository.deleteById(groupId);
     }
+
 
     public Group joinPublicGroup(String groupId, String userEmail) {
         Group group = groupRepository.findById(groupId)
