@@ -5,8 +5,11 @@ import com.paf_grp.backend.repository.tharusha.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -22,7 +25,14 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
-        Post savedPost = postRepository.save(post); // Create or update
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Typically, authentication.getName() returns the email or username.
+        String userEmail = authentication.getName();
+        post.setUserId(userEmail);
+
+        post.setCreatedAt(new Date());
+        post.setUpdatedAt(new Date());
+        Post savedPost = postRepository.save(post);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
     }
 
@@ -38,6 +48,12 @@ public class PostController {
         return postRepository.findAll();
     }
 
+    // ADD THIS NEW ENDPOINT
+    @GetMapping("/user/{email}")
+    public List<Post> getPostsByUser(@PathVariable String email) {
+        return postRepository.findByUserId(email);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable String id) {
         if (postRepository.existsById(id)) {
@@ -47,4 +63,3 @@ public class PostController {
         return ResponseEntity.notFound().build();
     }
 }
-
