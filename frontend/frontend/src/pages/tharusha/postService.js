@@ -103,3 +103,12 @@ export const getAllPosts = async () => {
   });
   return response.data;
 };
+
+// 8) Update a post (PUT /posts/:id)
+export const updatePost = async (postId, updatedPostData) => {
+  // updatedPostData = { description, hashtags: [...], mediaUrls: [...] }
+  const response = await axiosInstance.put(`/posts/${postId}`, updatedPostData, {
+    withCredentials: true,
+  });
+  return response.data;
+};
