@@ -16,6 +16,7 @@ import PostList from "./pages/tharusha/PostList";
 import PostDetail from "./pages/tharusha/PostDetail";
 import CreatePost from "./pages/tharusha/CreatePost";
 import MyPosts from "./pages/tharusha/MyPosts";
+import EditPost from "./pages/tharusha/EditPost";
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
           <Route path="/posts" element={<PostList />} />
         <Route path="/myposts" element={<MyPosts />} />
         <Route path="/posts/:id" element={<PostDetail />} />
+        <Route path="/editpost/:id" element={<EditPost />} />
+
         </Routes>
       </BrowserRouter>
     </div>
