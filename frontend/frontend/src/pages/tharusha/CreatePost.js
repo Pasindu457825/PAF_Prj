@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebase/FirebaseConfig"; // adjust path as needed
-import "./CreatePost.css"; // optional styling
+import { storage } from "../../firebase/FirebaseConfig"; // Adjust the path as needed
+import "./CreatePost.css";
 
 function CreatePost() {
   // Basic fields for the post
@@ -13,14 +13,12 @@ function CreatePost() {
   const [imageFiles, setImageFiles] = useState([]);
   const [videoFiles, setVideoFiles] = useState([]);
 
-  // UI feedback
+  // UI feedback states
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // -------------------------------
   // Handle input changes
-  // -------------------------------
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
@@ -39,9 +37,7 @@ function CreatePost() {
     setVideoFiles(Array.from(e.target.files));
   };
 
-  // -------------------------------
   // Submit Handler
-  // -------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -49,13 +45,13 @@ function CreatePost() {
     setIsLoading(true);
 
     try {
-      // 1) Convert comma-separated hashtags to an array
+      // 1) Convert comma-separated hashtags into an array
       const hashtagArray = hashtags
         .split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-      // 2) Upload images to Firebase
+      // 2) Upload images to Firebase and collect URLs
       const imageUrls = [];
       for (const file of imageFiles) {
         const fileRef = ref(storage, `posts/images/${file.name}`);
@@ -64,7 +60,7 @@ function CreatePost() {
         imageUrls.push(downloadURL);
       }
 
-      // 3) Upload videos to Firebase
+      // 3) Upload videos to Firebase and collect URLs
       const videoUrls = [];
       for (const file of videoFiles) {
         const fileRef = ref(storage, `posts/videos/${file.name}`);
@@ -73,20 +69,23 @@ function CreatePost() {
         videoUrls.push(downloadURL);
       }
 
-      // 4) COMBINE image and video URLs into ONE array for the backend
+      // 4) Combine image and video URLs into one array for the backend
       const mediaUrls = [...imageUrls, ...videoUrls];
 
       // 5) Prepare the JSON data for your backend
+      // Note: Do not send userId from the client. The backend will extract it from the session.
       const postData = {
         description,
         hashtags: hashtagArray,
-        mediaUrls, // single array combining images & videos
+        mediaUrls,
       };
 
-      // 6) Send POST request to your backend
-      await axios.post("http://localhost:8080/api/posts", postData);
+      // 6) Send POST request to your backend with credentials enabled
+      await axios.post("http://localhost:8080/api/posts", postData, {
+        withCredentials: true, // ensures cookies are sent so the backend can identify the user
+      });
 
-      // 7) Clear form & show success
+      // 7) Clear form fields and show success message
       setDescription("");
       setHashtags("");
       setImageFiles([]);
