@@ -62,4 +62,24 @@ public class PostController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // PostController.java
+    @PutMapping("/{id}")
+    public ResponseEntity<Post> updatePost(
+            @PathVariable String id,
+            @RequestBody Post updatedData
+    ) {
+        return postRepository.findById(id).map(existing -> {
+            // Overwrite fields
+            existing.setDescription(updatedData.getDescription());
+            existing.setHashtags(updatedData.getHashtags());
+            existing.setMediaUrls(updatedData.getMediaUrls()); // replaced entirely
+
+            existing.setUpdatedAt(new Date());
+            Post saved = postRepository.save(existing);
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+
 }
