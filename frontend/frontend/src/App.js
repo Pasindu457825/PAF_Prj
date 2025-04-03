@@ -12,6 +12,12 @@ import MyProfile from "./pages/pasindu/MyProfile";
 import ForgotPassword from "./pages/pasindu/reset_password/ForgotPassword"; // Import the page
 import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
 
+import PostList from "./pages/tharusha/PostList";
+import PostDetail from "./pages/tharusha/PostDetail";
+import CreatePost from "./pages/tharusha/CreatePost";
+import MyPosts from "./pages/tharusha/MyPosts";
+import EditPost from "./pages/tharusha/EditPost";
+
 function App() {
   return (
     <div>
@@ -27,6 +33,14 @@ function App() {
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+
+          
+          <Route path="/create" element={<CreatePost />} />
+          <Route path="/posts" element={<PostList />} />
+        <Route path="/myposts" element={<MyPosts />} />
+        <Route path="/posts/:id" element={<PostDetail />} />
+        <Route path="/editpost/:id" element={<EditPost />} />
+
         </Routes>
       </BrowserRouter>
     </div>
