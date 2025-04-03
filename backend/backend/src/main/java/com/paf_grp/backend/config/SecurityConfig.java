@@ -36,6 +36,7 @@ public class SecurityConfig {
 
     // 4) SecurityFilterChain using lambda-style configuration
     @Bean
+
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // Register our custom DaoAuthenticationProvider
         http.authenticationProvider(authProvider());
@@ -70,6 +71,8 @@ public class SecurityConfig {
                 // Enable CORS with default settings (or customize if needed)
                 .cors(Customizer.withDefaults());
 
+
         return http.build();
     }
+
 }

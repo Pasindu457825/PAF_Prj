@@ -78,6 +78,13 @@ const MyProfile = () => {
         </button>
 
         <button
+          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+          onClick={() => navigate(`/groups/${user.id}`)}
+        >
+          ➕ My Groups
+        </button>
+
+        <button
           className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition"
           onClick={() => {
             sessionStorage.removeItem("user");
@@ -87,7 +94,6 @@ const MyProfile = () => {
           Logout
         </button>
 
-        {/* ✅ Delete Button */}
         <button
           className="mt-4 w-full bg-gray-800 text-white py-2 rounded-md hover:bg-black transition"
           onClick={handleDelete}
