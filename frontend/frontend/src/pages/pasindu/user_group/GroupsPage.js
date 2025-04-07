@@ -141,25 +141,58 @@ const GroupsPage = () => {
               {groups.map((group) => (
                 <li
                   key={group.id}
-                  onClick={() => navigate(`/groups/view/${group.id}`)}
-                  className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md hover:bg-blue-50 transition cursor-pointer"
+                  className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition"
                 >
-                  <h4 className="text-lg font-semibold text-blue-700">
-                    {group.name}
-                    {group.isPrivate && (
-                      <span className="ml-2 text-sm text-purple-600">🔒</span>
-                    )}
-                  </h4>
-                  <p className="text-gray-600">{group.description}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Created by: {group.createdBy}
-                  </p>
-                  <button
-                    onClick={() => navigate(`/groups/chat/${group.id}`)}
-                    className="text-blue-600 underline text-sm"
+                  <div
+                    onClick={() => navigate(`/groups/view/${group.id}`)}
+                    className="cursor-pointer"
                   >
-                    Go to Group Chat 💬
-                  </button>
+                    <h4 className="text-lg font-semibold text-blue-700">
+                      {group.name}
+                      {group.isPrivate && (
+                        <span className="ml-2 text-sm text-purple-600">🔒</span>
+                      )}
+                    </h4>
+                    <p className="text-gray-600">{group.description}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Created by: {group.createdBy}
+                    </p>
+                  </div>
+
+                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <button
+                      onClick={() => navigate(`/groups/chat/${group.id}`)}
+                      className="text-blue-600 underline text-sm mb-2 sm:mb-0"
+                    >
+                      Go to Group Chat 💬
+                    </button>
+
+                    <button
+                      onClick={async () => {
+                        const confirmed = window.confirm(
+                          `Are you sure you want to delete the group "${group.name}"?`
+                        );
+                        if (!confirmed) return;
+
+                        try {
+                          await axios.delete(
+                            `http://localhost:8080/api/groups/delete/${group.id}`,
+                            { params: { userEmail: user.email } }
+                          );
+                          setGroups(groups.filter((g) => g.id !== group.id));
+                          setMessage(`✅ "${group.name}" deleted successfully`);
+                        } catch (err) {
+                          const msg =
+                            err.response?.data?.message ||
+                            "Failed to delete group.";
+                          alert("Error: " + msg);
+                        }
+                      }}
+                      className="text-red-600 text-sm hover:underline"
+                    >
+                      🗑️ Delete Group
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

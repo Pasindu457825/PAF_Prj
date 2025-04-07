@@ -93,9 +93,17 @@ public class GroupService {
     }
 
     // ✅ Delete group by ID
-    public void deleteGroup(String id) {
-        groupRepository.deleteById(id);
+    public void deleteGroup(String groupId, String requestingUserEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getCreatedBy().equalsIgnoreCase(requestingUserEmail)) {
+            throw new RuntimeException("Only the group creator can delete the group");
+        }
+
+        groupRepository.deleteById(groupId);
     }
+
 
     public Group joinPublicGroup(String groupId, String userEmail) {
         Group group = groupRepository.findById(groupId)
@@ -170,6 +178,24 @@ public class GroupService {
 
         group.getPendingRequests().remove(userEmail);
 
+        return groupRepository.save(group);
+    }
+
+    // ✅ User leaves a group
+    public Group leaveGroup(String groupId, String userEmail) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (!group.getMemberIds().contains(userEmail)) {
+            throw new RuntimeException("User is not a member of this group");
+        }
+
+        // Prevent creator from leaving their own group (optional)
+        if (group.getCreatedBy().equalsIgnoreCase(userEmail)) {
+            throw new RuntimeException("Group creator cannot leave their own group");
+        }
+
+        group.getMemberIds().remove(userEmail);
         return groupRepository.save(group);
     }
 
