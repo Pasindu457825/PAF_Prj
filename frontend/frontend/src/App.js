@@ -29,6 +29,13 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 //gropus
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
+// Learning
+import CourseCatalog from "./pages/pamaa/CourseCatalog";
+import CourseDetail from "./pages/pamaa/CourseDetail";
+import LearningDashboard from "./pages/pamaa/LearningDashboard";
+import CourseProgress from "./pages/pamaa/CourseProgress";
+import Certificate from "./pages/pamaa/Certificate";
+
 
 function App() {
   return (
@@ -65,6 +72,13 @@ function App() {
 
           {/* group chat */}
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
+
+           {/* Learning */}
+          <Route path="/courses" element={<CourseCatalog />} />
+          <Route path="/courses/:id" element={<CourseDetail />} />
+          <Route path="/my-learning" element={<LearningDashboard />} />
+          <Route path="/learning/:courseId" element={<CourseProgress />} />
+          <Route path="/certificates/:userEmail/:courseId" element={<Certificate />} />
 
         </Routes>
       </BrowserRouter>
