@@ -78,6 +78,13 @@ const MyProfile = () => {
         </button>
 
         <button
+          className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition"
+          onClick={() => navigate("/courses")}
+        >
+          Online Learning
+        </button>
+
+        <button
           className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
           onClick={() => navigate(`/groups/${user.id}`)}
         >
