@@ -30,12 +30,14 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
 // Learning
-import CourseCatalog from "./pages/pamaa/CourseCatalog";
-import CourseDetail from "./pages/pamaa/CourseDetail";
-import LearningDashboard from "./pages/pamaa/LearningDashboard";
-import CourseProgress from "./pages/pamaa/CourseProgress";
-import Certificate from "./pages/pamaa/Certificate";
-
+import CourseList from "./components/pamaa/Course/CourseList";
+import CourseDetails from "./components/pamaa/Course/CourseDetails";
+import CourseCreation from "./components/pamaa/Course/CourseCreation";
+import CourseEdit from "./components/pamaa/Course/CourseEdit";
+import CourseView from "./components/pamaa/Course/CourseView";
+import CertificateDownload from "./components/pamaa/Certificate/CertificateDownload"
+import CertificatesList from "./components/pamaa/Certificate/CertificatesList";
+import Dashboard from "./components/pamaa/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -74,12 +76,15 @@ function App() {
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
 
            {/* Learning */}
-          <Route path="/courses" element={<CourseCatalog />} />
-          <Route path="/courses/:id" element={<CourseDetail />} />
-          <Route path="/my-learning" element={<LearningDashboard />} />
-          <Route path="/learning/:courseId" element={<CourseProgress />} />
-          <Route path="/certificates/:userEmail/:courseId" element={<Certificate />} />
-
+          {/* <Route index element={<CourseList />} /> */}
+          <Route path="courses" element={<CourseList />} />
+          <Route path="courses/:courseId" element={<CourseDetails />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="courses/create" element={<CourseCreation />} />
+          <Route path="courses/edit/:courseId" element={<CourseEdit />} />
+          <Route path="courses/view/:courseId" element={<CourseView />} />
+          <Route path="certificates" element={<CertificatesList />} />
+          <Route path="certificates/:certificateId" element={<CertificateDownload />} />
         </Routes>
       </BrowserRouter>
     </div>
