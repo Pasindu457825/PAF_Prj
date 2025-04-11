@@ -1,6 +1,17 @@
 import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const AuthContext = createContext();
+
+const getCurrentUser = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/auth/current-user', { withCredentials: true }); // Ensure correct URL
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    return null;
+  }
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -70,3 +81,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

@@ -59,6 +59,7 @@ public class CourseController {
     }
     
     // Create a new course with file upload
+    @CrossOrigin("http://localhost:3000")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Course createCourse(
             @RequestParam("title") String title,
@@ -67,39 +68,36 @@ public class CourseController {
             @RequestParam("authorId") Long authorId,
             @RequestParam("units") String unitsJson,
             @RequestParam(value = "pdfFile", required = false) MultipartFile pdfFile) throws IOException {
-        
-        // Find the author
-        User author = userRepository.findById(authorId)
+
+        // Ensure the authorId matches the authenticated user
+        User author = userRepository.findById(authorId.toString())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
-        
+
         // Create course
         Course course = new Course(title, description, author);
         course.setCategory(category);
-        
+
         // Handle PDF file if present
         if (pdfFile != null && !pdfFile.isEmpty()) {
-            // Store the file and get its URL
             String fileUrl = fileStorageService.storePdfFile(pdfFile);
             course.setPdfFileName(pdfFile.getOriginalFilename());
             course.setPdfFileUrl(fileUrl);
         }
-        
+
         // Extract and add units
         List<Map<String, String>> units = objectMapper.readValue(unitsJson, new TypeReference<List<Map<String, String>>>() {});
-        
         if (units != null) {
             int orderIndex = 0;
             for (Map<String, String> unitData : units) {
                 String unitTitle = unitData.get("title");
                 String unitContent = unitData.get("content");
-                
                 if (unitTitle != null && unitContent != null) {
                     CourseUnit unit = new CourseUnit(unitTitle, unitContent, orderIndex++);
                     course.addUnit(unit);
                 }
             }
         }
-        
+
         return courseRepository.save(course);
     }
     
@@ -126,6 +124,11 @@ public class CourseController {
         // Find the course
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
+        
+        // Verify that the requester is the author
+        if (!course.getAuthor().getId().equals(requestedByUserId)) {
+            throw new BadRequestException("Only the course author can update this course");
+        }
         
         // Update course details
         course.setTitle(title);
@@ -190,7 +193,7 @@ public class CourseController {
     // Get courses by author
     @GetMapping("/author/{authorId}")
     public List<Course> getCoursesByAuthor(@PathVariable Long authorId) {
-        User author = userRepository.findById(authorId)
+        User author = userRepository.findById(authorId.toString())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
         
         return courseRepository.findByAuthor(author);

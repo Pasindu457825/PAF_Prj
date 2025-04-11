@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, BrowserRouter, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
+import { AuthProvider } from "./context/AuthContext"; // Import the correct export
 
 //user
 import CreateUser from "./pages/pasindu/CreateUser";
@@ -38,10 +39,11 @@ import CourseView from "./components/pamaa/Course/CourseView";
 import CertificateDownload from "./components/pamaa/Certificate/CertificateDownload"
 import CertificatesList from "./components/pamaa/Certificate/CertificatesList";
 import Dashboard from "./components/pamaa/Dashboard/Dashboard";
+import LearningNavBar from "./components/pamaa/LearningNavBar";
 
 function App() {
   return (
-    <div>
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -76,18 +78,45 @@ function App() {
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
 
            {/* Learning */}
-          {/* <Route index element={<CourseList />} /> */}
-          <Route path="courses" element={<CourseList />} />
-          <Route path="courses/:courseId" element={<CourseDetails />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="courses/create" element={<CourseCreation />} />
-          <Route path="courses/edit/:courseId" element={<CourseEdit />} />
-          <Route path="courses/view/:courseId" element={<CourseView />} />
-          <Route path="certificates" element={<CertificatesList />} />
-          <Route path="certificates/:certificateId" element={<CertificateDownload />} />
+          <Route
+            path="courses/*"
+            element={
+              <>
+                <LearningNavBar />
+                <Routes>
+                  <Route index element={<CourseList />} />
+                  <Route path=":courseId" element={<CourseDetails />} />
+                  <Route path="create" element={<CourseCreation />} />
+                  <Route path="edit/:courseId" element={<CourseEdit />} />
+                  <Route path="view/:courseId" element={<CourseView />} />
+                </Routes>
+              </>
+            }
+          />
+          <Route
+            path="dashboard"
+            element={
+              <>
+                <LearningNavBar />
+                <Dashboard />
+              </>
+            }
+          />
+          <Route
+            path="certificates/*"
+            element={
+              <>
+                <LearningNavBar />
+                <Routes>
+                  <Route index element={<CertificatesList />} />
+                  <Route path=":certificateId" element={<CertificateDownload />} />
+                </Routes>
+              </>
+            }
+          />
         </Routes>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   );
 }
 

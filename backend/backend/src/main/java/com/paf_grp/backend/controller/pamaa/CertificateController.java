@@ -1,6 +1,5 @@
 package com.paf_grp.backend.controller.pamaa;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +48,7 @@ public class CertificateController {
         Long userId = certificateRequest.get("userId");
         Long courseId = certificateRequest.get("courseId");
         
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId.toString())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
         Course course = courseRepository.findById(courseId)
@@ -78,7 +77,7 @@ public class CertificateController {
     // Get certificates for a user
     @GetMapping("/user/{userId}")
     public List<Certificate> getUserCertificates(@PathVariable Long userId) {
-        User user = userRepository.findAll(userId)
+        User user = userRepository.findById(userId.toString())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
         return certificateRepository.findByUser(user);
