@@ -1,35 +1,60 @@
 package com.paf_grp.backend.model.pamaa;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.paf_grp.backend.model.pasindu.User;
 
 @Document(collection = "courses")
 public class Course {
+
     @Id
     private String id;
+
     private String title;
+
     private String description;
-    private String creatorEmail;
-    private Date createdAt;
-    private Date updatedAt;
-    private List<Stage> stages = new ArrayList<>();
+
+    private String category;
+
+    private String pdfFileName;
+
+    private String pdfFileUrl;
+
+    @DBRef
+    @JsonBackReference("user-courses")
+    private User author;
+
+    @DBRef
+    @JsonManagedReference("course-units")
+    private List<CourseUnit> units = new ArrayList<>();
+
+    @DBRef
+    @JsonIgnore
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     // Default constructor
     public Course() {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
     }
 
-    // Constructor with fields
-    public Course(String title, String description, String creatorEmail) {
+    // Parameterized constructor
+    public Course(String title, String description, User author) {
         this.title = title;
         this.description = description;
-        this.creatorEmail = creatorEmail;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.author = author;
+    }
+
+    // Helper method to add a unit to this course
+    public void addUnit(CourseUnit unit) {
+        units.add(unit);
+        unit.setCourse(this);
     }
 
     // Getters and Setters
@@ -57,39 +82,51 @@ public class Course {
         this.description = description;
     }
 
-    public String getCreatorEmail() {
-        return creatorEmail;
+    public String getCategory() {
+        return category;
     }
 
-    public void setCreatorEmail(String creatorEmail) {
-        this.creatorEmail = creatorEmail;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String getPdfFileName() {
+        return pdfFileName;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setPdfFileName(String pdfFileName) {
+        this.pdfFileName = pdfFileName;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public String getPdfFileUrl() {
+        return pdfFileUrl;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setPdfFileUrl(String pdfFileUrl) {
+        this.pdfFileUrl = pdfFileUrl;
     }
 
-    public List<Stage> getStages() {
-        return stages;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setStages(List<Stage> stages) {
-        this.stages = stages;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
-    public void addStage(Stage stage) {
-        this.stages.add(stage);
+    public List<CourseUnit> getUnits() {
+        return units;
+    }
+
+    public void setUnits(List<CourseUnit> units) {
+        this.units = units;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(List<Enrollment> enrollments) {
+        this.enrollments = enrollments;
     }
 }

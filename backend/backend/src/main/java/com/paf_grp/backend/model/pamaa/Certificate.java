@@ -1,79 +1,99 @@
 package com.paf_grp.backend.model.pamaa;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.paf_grp.backend.model.pasindu.User;
 
 @Document(collection = "certificates")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Certificate {
-    
+
     @Id
     private String id;
-    private String userEmail;
-    private String courseId;
-    private String courseTitle;
-    private Date issueDate;
-    private String certificateUrl; // URL to the generated certificate PDF
-    
+
+    @DBRef
+    @JsonIdentityReference(alwaysAsId = false)
+    private User user;
+
+    @DBRef
+    @JsonIdentityReference(alwaysAsId = false)
+    private Course course;
+
+    @DBRef
+    @JsonIdentityReference(alwaysAsId = true)
+    private Enrollment enrollment;
+
+    private LocalDateTime issueDate;
+
+    private String certificateNumber;
+
     // Default constructor
     public Certificate() {
-        this.issueDate = new Date();
+        this.issueDate = LocalDateTime.now();
     }
-    
-    // Constructor with fields
-    public Certificate(String userEmail, String courseId, String courseTitle) {
-        this.userEmail = userEmail;
-        this.courseId = courseId;
-        this.courseTitle = courseTitle;
-        this.issueDate = new Date();
+
+    // Parameterized constructor
+    public Certificate(User user, Course course, Enrollment enrollment, String certificateNumber) {
+        this.user = user;
+        this.course = course;
+        this.enrollment = enrollment;
+        this.certificateNumber = certificateNumber;
+        this.issueDate = LocalDateTime.now();
     }
-    
+
     // Getters and Setters
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
-    public String getUserEmail() {
-        return userEmail;
+
+    public User getUser() {
+        return user;
     }
-    
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+
+    public void setUser(User user) {
+        this.user = user;
     }
-    
-    public String getCourseId() {
-        return courseId;
+
+    public Course getCourse() {
+        return course;
     }
-    
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
-    
-    public String getCourseTitle() {
-        return courseTitle;
+
+    public Enrollment getEnrollment() {
+        return enrollment;
     }
-    
-    public void setCourseTitle(String courseTitle) {
-        this.courseTitle = courseTitle;
+
+    public void setEnrollment(Enrollment enrollment) {
+        this.enrollment = enrollment;
     }
-    
-    public Date getIssueDate() {
+
+    public LocalDateTime getIssueDate() {
         return issueDate;
     }
-    
-    public void setIssueDate(Date issueDate) {
+
+    public void setIssueDate(LocalDateTime issueDate) {
         this.issueDate = issueDate;
     }
-    
-    public String getCertificateUrl() {
-        return certificateUrl;
+
+    public String getCertificateNumber() {
+        return certificateNumber;
     }
-    
-    public void setCertificateUrl(String certificateUrl) {
-        this.certificateUrl = certificateUrl;
+
+    public void setCertificateNumber(String certificateNumber) {
+        this.certificateNumber = certificateNumber;
     }
 }

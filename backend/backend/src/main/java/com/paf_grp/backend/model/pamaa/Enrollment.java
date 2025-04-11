@@ -1,35 +1,50 @@
 package com.paf_grp.backend.model.pamaa;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.paf_grp.backend.model.pasindu.User;
 
 @Document(collection = "enrollments")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Enrollment {
+
     @Id
     private String id;
 
-    private String userEmail;
-    private String courseId;
-    private Date enrolledAt;
-    private Set<Integer> completedStages = new HashSet<>();
-    private boolean completed;
-    private Date completedAt;
+    @DBRef
+    @JsonIdentityReference(alwaysAsId = false)
+    private User user;
+
+    @DBRef
+    @JsonIdentityReference(alwaysAsId = false)
+    private Course course;
+
+    private LocalDateTime enrollmentDate;
+
+    private int lastCompletedUnit = 0;
+
+    private boolean completed = false;
+
+    @DBRef
+    private Certificate certificate;
 
     // Default constructor
     public Enrollment() {
-        this.enrolledAt = new Date();
-        this.completed = false;
+        this.enrollmentDate = LocalDateTime.now();
     }
 
-    // Constructor with fields
-    public Enrollment(String userEmail, String courseId) {
-        this.userEmail = userEmail;
-        this.courseId = courseId;
-        this.enrolledAt = new Date();
-        this.completed = false;
+    // Parameterized constructor
+    public Enrollment(User user, Course course) {
+        this.user = user;
+        this.course = course;
+        this.enrollmentDate = LocalDateTime.now();
     }
 
     // Getters and Setters
@@ -41,36 +56,36 @@ public class Enrollment {
         this.id = id;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getCourseId() {
-        return courseId;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
-    public Date getEnrolledAt() {
-        return enrolledAt;
+    public LocalDateTime getEnrollmentDate() {
+        return enrollmentDate;
     }
 
-    public void setEnrolledAt(Date enrolledAt) {
-        this.enrolledAt = enrolledAt;
+    public void setEnrollmentDate(LocalDateTime enrollmentDate) {
+        this.enrollmentDate = enrollmentDate;
     }
 
-    public Set<Integer> getCompletedStages() {
-        return completedStages;
+    public int getLastCompletedUnit() {
+        return lastCompletedUnit;
     }
 
-    public void setCompletedStages(Set<Integer> completedStages) {
-        this.completedStages = completedStages;
+    public void setLastCompletedUnit(int lastCompletedUnit) {
+        this.lastCompletedUnit = lastCompletedUnit;
     }
 
     public boolean isCompleted() {
@@ -79,20 +94,24 @@ public class Enrollment {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-        if (completed) {
-            this.completedAt = new Date();
+    }
+
+    public Certificate getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(Certificate certificate) {
+        this.certificate = certificate;
+    }
+
+    // Helper method to update progress
+    public void updateProgress(int unitIndex, int totalUnits) {
+        if (unitIndex > lastCompletedUnit) {
+            this.lastCompletedUnit = unitIndex;
         }
-    }
 
-    public Date getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(Date completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    public void completeStage(int stageOrder) {
-        this.completedStages.add(stageOrder);
+        if (lastCompletedUnit >= totalUnits - 1) {
+            this.completed = true;
+        }
     }
 }

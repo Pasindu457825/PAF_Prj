@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +28,9 @@ public class EnrollmentController {
             
             Enrollment enrollment = enrollmentService.enrollUserInCourse(userEmail, courseId);
             return new ResponseEntity<>(enrollment, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(Map.of("error", e.getReason()), e.getStatusCode());
+        } catch (Exception e) {
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
@@ -50,9 +54,17 @@ public class EnrollmentController {
     public ResponseEntity<Enrollment> getEnrollment(
             @PathVariable String userEmail, 
             @PathVariable Long courseId) {
-        return enrollmentService.getEnrollment(userEmail, courseId)
-                .map(enrollment -> new ResponseEntity<>(enrollment, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            return enrollmentService.getEnrollment(userEmail, courseId)
+                    .map(enrollment -> new ResponseEntity<>(enrollment, HttpStatus.OK))
+                    .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Enrollment not found"));
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving enrollment", e);
+        }
     }
     
     // Mark a stage as completed
@@ -64,7 +76,9 @@ public class EnrollmentController {
         try {
             Enrollment updatedEnrollment = enrollmentService.completeStage(userEmail, courseId, stageOrder);
             return new ResponseEntity<>(updatedEnrollment, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(Map.of("error", e.getReason()), e.getStatusCode());
+        } catch (Exception e) {
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
