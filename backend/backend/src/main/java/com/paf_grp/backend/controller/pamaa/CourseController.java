@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.paf_grp.backend.constants.RestURI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +34,16 @@ import com.paf_grp.backend.repository.pasindu.UserRepository;
 import com.paf_grp.backend.service.pamaa.FileStorageService;
 
 @RestController
-@RequestMapping("/api/courses")
+@RequestMapping(RestURI.BASE_URL)
 @CrossOrigin("http://localhost:3000")
 public class CourseController {
-    
+
     @Autowired
     private CourseRepository courseRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private CourseUnitRepository courseUnitRepository;
 
@@ -51,27 +52,27 @@ public class CourseController {
 
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     // Get all courses
-    @GetMapping
+    @GetMapping(RestURI.ALL_COURSES)
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }
-    
+
     // Create a new course with file upload
-    @CrossOrigin("http://localhost:3000")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = RestURI.CREATE_COURSE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Course createCourse(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("category") String category,
-            @RequestParam("authorId") Long authorId,
+            @RequestParam("authorId") String authorId,
             @RequestParam("units") String unitsJson,
             @RequestParam(value = "pdfFile", required = false) MultipartFile pdfFile) throws IOException {
 
         // Ensure the authorId matches the authenticated user
-        User author = userRepository.findById(authorId.toString())
+        User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
+        System.out.println("Retrieved user: " + author.getId());
 
         // Create course
         Course course = new Course(title, description, author);
@@ -97,22 +98,22 @@ public class CourseController {
                 }
             }
         }
-
+        System.out.println("Course object before saving: " + course);
         return courseRepository.save(course);
     }
-    
+
     // Get course by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Course> getCourseById(@PathVariable Long id) {
+    public ResponseEntity<Course> getCourseById(@PathVariable String id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
         return ResponseEntity.ok(course);
     }
-    
+
     // Update course with file
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Course> updateCourse(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("category") String category,
@@ -120,21 +121,21 @@ public class CourseController {
             @RequestParam("units") String unitsJson,
             @RequestParam(value = "pdfFile", required = false) MultipartFile pdfFile,
             @RequestParam(value = "replacePdf", required = false, defaultValue = "false") Boolean replacePdf) throws IOException {
-            
+
         // Find the course
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
-        
+
         // Verify that the requester is the author
         if (!course.getAuthor().getId().equals(requestedByUserId)) {
             throw new BadRequestException("Only the course author can update this course");
         }
-        
+
         // Update course details
         course.setTitle(title);
         course.setDescription(description);
         course.setCategory(category);
-        
+
         // Handle PDF file updates
         if (pdfFile != null && !pdfFile.isEmpty()) {
             // Store the new file and update course
@@ -146,86 +147,90 @@ public class CourseController {
             course.setPdfFileName(null);
             course.setPdfFileUrl(null);
         }
-        
+
         // Handle units updates - first clear existing units
         courseUnitRepository.deleteAll(course.getUnits());
         course.getUnits().clear();
-        
+
         // Add updated units
         List<Map<String, String>> units = objectMapper.readValue(unitsJson, new TypeReference<List<Map<String, String>>>() {});
-        
+
         if (units != null) {
             int orderIndex = 0;
             for (Map<String, String> unitData : units) {
                 String unitTitle = unitData.get("title");
                 String unitContent = unitData.get("content");
-                
+
                 if (unitTitle != null && unitContent != null) {
                     CourseUnit unit = new CourseUnit(unitTitle, unitContent, orderIndex++);
                     course.addUnit(unit);
                 }
             }
         }
-        
+        course.getUnits().forEach(unit -> {
+            System.out.println("Unit: " + unit.getTitle() + ", ID: " + unit.getId());
+        });
+
+
         Course updatedCourse = courseRepository.save(course);
         return ResponseEntity.ok(updatedCourse);
     }
-    
+
     // Delete course
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCourse(@PathVariable Long id, @RequestParam Long userId) {
+    public ResponseEntity<?> deleteCourse(@PathVariable String id, @RequestParam Long userId) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
-        
+
         // Verify that the requester is the author
         if (!course.getAuthor().getId().equals(userId)) {
             throw new BadRequestException("Only the course author can delete this course");
         }
-        
+
         courseRepository.delete(course);
-        
+
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
-        
+
         return ResponseEntity.ok(response);
     }
-    
+
     // Get courses by author
     @GetMapping("/author/{authorId}")
     public List<Course> getCoursesByAuthor(@PathVariable Long authorId) {
         User author = userRepository.findById(authorId.toString())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
-        
+
         return courseRepository.findByAuthor(author);
     }
-    
+
     // Search courses by title
     @GetMapping("/search")
     public List<Course> searchCourses(@RequestParam String query) {
         return courseRepository.findByTitleContainingIgnoreCase(query);
     }
-    
+
     // Get units for a course
     @GetMapping("/{courseId}/units")
-    public List<CourseUnit> getCourseUnits(@PathVariable Long courseId) {
+    public List<CourseUnit> getCourseUnits(@PathVariable String courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
-        
+
         return courseUnitRepository.findByCourseOrderByOrderIndexAsc(course);
     }
-    
+
     // Get specific unit in a course
     @GetMapping("/{courseId}/units/{unitIndex}")
-    public CourseUnit getCourseUnit(@PathVariable Long courseId, @PathVariable int unitIndex) {
+    public CourseUnit getCourseUnit(@PathVariable String courseId, @PathVariable int unitIndex) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
-        
+
         List<CourseUnit> units = courseUnitRepository.findByCourseOrderByOrderIndexAsc(course);
-        
+
         if (unitIndex < 0 || unitIndex >= units.size()) {
             throw new ResourceNotFoundException("Unit not found with index: " + unitIndex);
         }
-        
+
         return units.get(unitIndex);
     }
 }

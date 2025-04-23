@@ -44,9 +44,9 @@ public class EnrollmentController {
     
     // Enroll in a course
     @PostMapping
-    public Enrollment enrollInCourse(@RequestBody Map<String, Long> enrollmentRequest) {
+    public Enrollment enrollInCourse(@RequestBody Map<String, String> enrollmentRequest) {
         String userId = String.valueOf(enrollmentRequest.get("userId"));
-        Long courseId = enrollmentRequest.get("courseId");
+        String courseId = enrollmentRequest.get("courseId");
         
         User user = userRepository.findById(String.valueOf(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -65,8 +65,8 @@ public class EnrollmentController {
     
     // Get enrollments for a user
     @GetMapping("/user/{userId}")
-    public List<Enrollment> getUserEnrollments(@PathVariable Long userId) {
-        User user = userRepository.findById(String.valueOf(userId))
+    public List<Enrollment> getUserEnrollments(@PathVariable String userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
         return enrollmentRepository.findByUser(user);
@@ -74,8 +74,8 @@ public class EnrollmentController {
     
     // Get completed enrollments for a user
     @GetMapping("/user/{userId}/completed")
-    public List<Enrollment> getCompletedEnrollments(@PathVariable Long userId) {
-        User user = userRepository.findById(String.valueOf(userId))
+    public List<Enrollment> getCompletedEnrollments(@PathVariable String userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
         return enrollmentRepository.findByUserAndCompleted(user, true);
@@ -83,14 +83,14 @@ public class EnrollmentController {
     
     // Get enrollment details
     @GetMapping("/{enrollmentId}")
-    public Enrollment getEnrollment(@PathVariable Long enrollmentId) {
+    public Enrollment getEnrollment(@PathVariable String enrollmentId) {
         return enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found with id: " + enrollmentId));
     }
     
     // Update progress
     @PutMapping("/{enrollmentId}/progress")
-    public Enrollment updateProgress(@PathVariable Long enrollmentId, @RequestBody Map<String, Integer> progressUpdate) {
+    public Enrollment updateProgress(@PathVariable String enrollmentId, @RequestBody Map<String, Integer> progressUpdate) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found with id: " + enrollmentId));
         
@@ -106,8 +106,9 @@ public class EnrollmentController {
     }
     
     // Get enrollment stats for a user
+    // check this
     @GetMapping("/user/{userId}/stats")
-    public ResponseEntity<Map<String, Object>> getUserEnrollmentStats(@PathVariable Long userId) {
+    public ResponseEntity<Map<String, Object>> getUserEnrollmentStats(@PathVariable String userId) {
         User user = userRepository.findById(String.valueOf(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         

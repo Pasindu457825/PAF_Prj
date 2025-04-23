@@ -43,12 +43,12 @@ public class CertificateController {
     private EnrollmentRepository enrollmentRepository;
     
     // Generate a certificate
-    @PostMapping
-    public Certificate generateCertificate(@RequestBody Map<String, Long> certificateRequest) {
-        Long userId = certificateRequest.get("userId");
-        Long courseId = certificateRequest.get("courseId");
+    @PostMapping("/generate")
+    public Certificate generateCertificate(@RequestBody Map<String, String> certificateRequest) {
+        String userId = certificateRequest.get("userId");
+        String courseId = certificateRequest.get("courseId");
         
-        User user = userRepository.findById(userId.toString())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
         Course course = courseRepository.findById(courseId)

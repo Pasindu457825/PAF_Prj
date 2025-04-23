@@ -1,5 +1,7 @@
 package com.paf_grp.backend.model.pamaa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,7 +21,8 @@ public class CourseUnit {
     private int orderIndex;
 
     @DBRef
-    @JsonBackReference("course-units")
+//    @JsonBackReference("course-units")
+    @JsonIgnore
     private Course course;
 
     // Default constructor
@@ -28,6 +31,7 @@ public class CourseUnit {
 
     // Parameterized constructor
     public CourseUnit(String title, String content, int orderIndex) {
+        this.id = new ObjectId().toString(); // Generate ID upfront
         this.title = title;
         this.content = content;
         this.orderIndex = orderIndex;

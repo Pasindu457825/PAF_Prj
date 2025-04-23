@@ -12,7 +12,7 @@ import com.paf_grp.backend.model.pamaa.Course;
 
 
 @Repository
-public interface EnrollmentRepository extends MongoRepository<Enrollment, Long> {
+public interface EnrollmentRepository extends MongoRepository<Enrollment, String> {
     List<Enrollment> findByUser(User user);
     List<Enrollment> findByUserAndCompleted(User user, boolean completed);
     Optional<Enrollment> findByUserAndCourse(User user, Course course);

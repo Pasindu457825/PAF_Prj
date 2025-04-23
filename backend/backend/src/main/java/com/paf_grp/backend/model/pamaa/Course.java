@@ -32,7 +32,7 @@ public class Course {
     @JsonBackReference("user-courses")
     private User author;
 
-    @DBRef
+    @DBRef(lazy = false)
     @JsonManagedReference("course-units")
     private List<CourseUnit> units = new ArrayList<>();
 

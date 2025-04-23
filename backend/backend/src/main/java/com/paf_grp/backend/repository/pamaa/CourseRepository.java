@@ -9,7 +9,7 @@ import com.paf_grp.backend.model.pasindu.User;
 import com.paf_grp.backend.model.pamaa.Course;
 
 @Repository
-public interface CourseRepository extends MongoRepository<Course, Long> {
+public interface CourseRepository extends MongoRepository<Course, String> {
     List<Course> findByAuthor(User author);
     List<Course> findByTitleContainingIgnoreCase(String title);
 }
