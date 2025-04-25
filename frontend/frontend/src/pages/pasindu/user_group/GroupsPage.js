@@ -105,64 +105,65 @@ const GroupsPage = () => {
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 min-w-[1200px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 min-w-[1200px]">
             {groups.map((group) => (
               <div
                 key={group.id}
-                className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"
+                onClick={() => navigate(`/groups/view/${group.id}`)}
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition h-[260px] p-4 flex flex-col justify-between cursor-pointer group"
               >
-                {/* Placeholder image */}
-                <div className="h-36 bg-gray-100 flex items-center justify-center text-gray-400">
-                  <span className="text-4xl">👥</span>
-                </div>
-
-                <div className="p-4">
-                  <h4 className="text-sm font-semibold text-blue-700 mb-1">
+                <div>
+                  <h4 className="text-base font-semibold text-blue-700 mb-1 group-hover:underline">
                     {group.name}
                     {group.isPrivate && (
-                      <span className="ml-1 text-xs text-purple-600">🔒</span>
+                      <span className="ml-2 text-sm text-purple-600">🔒</span>
                     )}
                   </h4>
-                  <p className="text-xs text-gray-600 truncate mb-2">
-                    {group.description}
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {group.description || "No description provided."}
                   </p>
-
-                  <p className="text-xs text-gray-500 mb-3">
+                  <p className="text-xs text-gray-500">
+                    Created by: <br />
                     {group.createdBy}
                   </p>
+                </div>
 
-                  <div className="flex justify-between text-xs">
-                    <button
-                      onClick={() => navigate(`/groups/chat/${group.id}`)}
-                      className="text-blue-600 hover:underline font-medium"
-                    >
-                      💬 Chat
-                    </button>
-                    <button
-                      onClick={async () => {
-                        const confirmed = window.confirm(
-                          `Are you sure you want to delete "${group.name}"?`
+                <div className="flex justify-between items-center text-sm mt-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevents card click
+                      navigate(`/groups/chat/${group.id}`);
+                    }}
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    💬 Chat
+                  </button>
+
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation(); // prevents card click
+                      const confirmed = window.confirm(
+                        `Are you sure you want to delete "${group.name}"?`
+                      );
+                      if (!confirmed) return;
+
+                      try {
+                        await axios.delete(
+                          `http://localhost:8080/api/groups/delete/${group.id}`,
+                          { params: { userEmail: user.email } }
                         );
-                        if (!confirmed) return;
-
-                        try {
-                          await axios.delete(
-                            `http://localhost:8080/api/groups/delete/${group.id}`,
-                            { params: { userEmail: user.email } }
-                          );
-                          setGroups(groups.filter((g) => g.id !== group.id));
-                          setMessage(`✅ "${group.name}" deleted`);
-                        } catch (err) {
-                          const msg =
-                            err.response?.data?.message || "Delete failed.";
-                          alert("Error: " + msg);
-                        }
-                      }}
-                      className="text-red-500 hover:underline font-medium"
-                    >
-                      🗑️ Delete
-                    </button>
-                  </div>
+                        setGroups(groups.filter((g) => g.id !== group.id));
+                        setMessage(`✅ "${group.name}" deleted`);
+                      } catch (err) {
+                        const msg =
+                          err.response?.data?.message || "Delete failed.";
+                        alert("Error: " + msg);
+                      }
+                    }}
+                    className="text-red-500 hover:underline font-medium"
+                  >
+                    🗑️ Delete
+                  </button>
                 </div>
               </div>
             ))}

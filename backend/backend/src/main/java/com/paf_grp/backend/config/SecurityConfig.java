@@ -45,7 +45,8 @@ public class SecurityConfig {
                     auth.requestMatchers(
                             "/api/users/**",
                             "/api/auth/**",
-                            "/api/groups/**",     // ✅ Add if public
+                            "/api/groups/**",
+                            "/api/messages/**",// ✅ Add if public
                             "/login"              // Or remove this if unused
                     ).permitAll();
 
