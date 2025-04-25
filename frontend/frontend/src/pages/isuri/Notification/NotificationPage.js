@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getNotifications, markAsRead, saveNotificationToLocalStorage } from "./notificationService";
+import { getNotifications, markAsRead, saveNotificationToLocalStorage } from "./NotificationService";
 
 function NotificationPage() {
   const [notifications, setNotifications] = useState([]);

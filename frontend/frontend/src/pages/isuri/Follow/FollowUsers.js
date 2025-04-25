@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-function FollowdUsers() {
+function FollowUsers() {
   const [followedUsers, setFollowedUsers] = useState([]);
   const loggedInUserId = localStorage.getItem('userId');
 
@@ -65,4 +65,4 @@ function FollowdUsers() {
   );
 }
 
-export default FollowdUsers;
+export default FollowUsers;
