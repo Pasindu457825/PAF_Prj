@@ -21,6 +21,7 @@ import MyPosts from "./pages/tharusha/MyPosts";
 import EditPost from "./pages/tharusha/EditPost";
 
 //gropus
+import CreateGroupPage  from "./pages/pasindu/user_group/CreateGroupPage";
 import GroupsPage from "./pages/pasindu/user_group/GroupsPage";
 import GroupDetailPage from "./pages/pasindu/user_group/GroupDetailPage";
 import ViewGroupsPage from "./pages/pasindu/user_group/ViewGroupsPage";
@@ -58,6 +59,7 @@ function App() {
 
 
           {/* group */}
+          <Route path="/groups/create" element={<CreateGroupPage />} />
           <Route path="/groups/:userId" element={<GroupsPage />} />
           <Route path="/groups/view/:groupId" element={<GroupDetailPage />} />
           <Route path="/groups/view" element={<ViewGroupsPage />} />
