@@ -31,6 +31,7 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
 import NotificationPage from './pages/isuri/Notification/NotificationPage'
+//follow
 import AllUsers from "./pages/isuri/Follow/AllUsers";
 import FollowdUsers from "./pages/isuri/Follow/FollowUsers";
 function App() {
@@ -69,6 +70,7 @@ function App() {
 
           {/* group chat */}
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
+          {/* notification*/}
           <Route path="/notificationsPage" element={<NotificationPage />} />
           <Route path="/allUsers" element={<AllUsers />} />
           <Route path="/followdUsers" element={<FollowdUsers />} />
