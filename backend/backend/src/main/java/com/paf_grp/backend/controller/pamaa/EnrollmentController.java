@@ -98,13 +98,19 @@ public class EnrollmentController {
         
         // Get total units count
         int totalUnits = courseUnitRepository.countByCourse(enrollment.getCourse());
-        
+        System.out.println("total unitss: "+totalUnits);
         // Update progress
         enrollment.updateProgress(unitIndex, totalUnits);
         
         return enrollmentRepository.save(enrollment);
     }
-    
+
+//    unitIndex is the zero-based index of the unit the user just completed.
+//    If the course has 4 units (0 to 3), and the user just completed the 2nd unit, send unitIndex: 1.
+
+
+
+
     // Get enrollment stats for a user
     // check this
     @GetMapping("/user/{userId}/stats")

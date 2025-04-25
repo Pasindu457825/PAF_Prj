@@ -11,7 +11,7 @@ import com.paf_grp.backend.model.pamaa.Course;
 import com.paf_grp.backend.model.pasindu.User;
 
 @Repository
-public interface CertificateRepository extends MongoRepository<Certificate, Long> {
+public interface CertificateRepository extends MongoRepository<Certificate, String> {
     List<Certificate> findByUser(User user);
     Optional<Certificate> findByUserAndCourse(User user, Course course);
     Optional<Certificate> findByCertificateNumber(String certificateNumber);

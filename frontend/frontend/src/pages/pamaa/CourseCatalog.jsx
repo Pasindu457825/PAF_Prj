@@ -12,7 +12,9 @@ const CourseCatalog = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:8080/api/courses');
+        const response = await axios.get('http://localhost:8080/api/courses/getall', {
+          withCredentials: true,
+        });
         setCourses(response.data);
         setError('');
       } catch (err) {
@@ -22,9 +24,10 @@ const CourseCatalog = () => {
         setLoading(false);
       }
     };
-
+  
     fetchCourses();
   }, []);
+  
 
   // Filter courses based on search term
   const filteredCourses = courses.filter(course => 

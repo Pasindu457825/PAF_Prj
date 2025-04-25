@@ -28,12 +28,12 @@ public class Course {
 
     private String pdfFileUrl;
 
-    @DBRef
-    @JsonBackReference("user-courses")
+    @DBRef(lazy = false)
+//    @JsonBackReference("user-courses")
     private User author;
 
     @DBRef(lazy = false)
-    @JsonManagedReference("course-units")
+//    @JsonManagedReference("course-units")
     private List<CourseUnit> units = new ArrayList<>();
 
     @DBRef

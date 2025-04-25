@@ -53,7 +53,6 @@ public class CertificateController {
         
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
-        
         // Check if user has completed the course
         Enrollment enrollment = enrollmentRepository.findByUserAndCourse(user, course)
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found for this user and course"));
@@ -76,8 +75,8 @@ public class CertificateController {
     
     // Get certificates for a user
     @GetMapping("/user/{userId}")
-    public List<Certificate> getUserCertificates(@PathVariable Long userId) {
-        User user = userRepository.findById(userId.toString())
+    public List<Certificate> getUserCertificates(@PathVariable String userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         
         return certificateRepository.findByUser(user);
@@ -85,7 +84,7 @@ public class CertificateController {
     
     // Get certificate by ID
     @GetMapping("/{id}")
-    public Certificate getCertificate(@PathVariable Long id) {
+    public Certificate getCertificate(@PathVariable String id) {
         return certificateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Certificate not found with id: " + id));
     }
