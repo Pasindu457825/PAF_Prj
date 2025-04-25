@@ -61,105 +61,115 @@ const GroupsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-6 text-center">
-          👥 My Groups
-        </h2>
+    <div className="min-h-screen bg-white py-10 px-6 relative">
+      {/* Floating Create Button */}
+      <div className="absolute top-6 right-6">
+        <button
+          onClick={() => navigate("/groups/create")}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full shadow-sm text-sm font-medium transition"
+        >
+          ➕ New Group
+        </button>
+      </div>
 
-        {/* ➕ Create Group Form */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Create a New Group</h3>
-          <input
-            type="text"
-            name="name"
-            placeholder="Group Name"
-            value={newGroup.name}
-            onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
-            className="w-full px-4 py-2 border rounded-md mb-2"
-            required
-          />
-          <textarea
-            name="description"
-            placeholder="Description (optional)"
-            value={newGroup.description}
-            onChange={(e) =>
-              setNewGroup({ ...newGroup, description: e.target.value })
-            }
-            className="w-full px-4 py-2 border rounded-md mb-2"
-          ></textarea>
+      {/* Header */}
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">My Groups</h2>
 
-          {/* ✅ Private checkbox */}
-          <label className="flex items-center space-x-2 text-sm mb-2">
-            <input
-              type="checkbox"
-              checked={newGroup.isPrivate}
-              onChange={(e) =>
-                setNewGroup({ ...newGroup, isPrivate: e.target.checked })
-              }
-            />
-            <span>Make this group private 🔒</span>
-          </label>
-
-          <button
-            type="button"
-            onClick={handleCreateGroup}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
-          >
-            ➕ Create Group
-          </button>
+      {/* Message */}
+      {message && (
+        <div
+          className={`text-center font-medium mb-6 px-4 py-2 rounded-md ${
+            message.includes("✅")
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {message}
         </div>
+      )}
 
-        {/* ✅ Message */}
-        {message && (
-          <p
-            className={`text-center font-medium mb-4 ${
-              message.includes("✅") ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {message}
-          </p>
-        )}
+      {/* Join Requests */}
+      <div className="mb-10 text-left">
+        <button
+          onClick={() => navigate("/notifications")}
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm transition"
+        >
+          🔔 View Join Requests
+        </button>
+      </div>
 
-        {/* 🔔 Notification Button for Join Requests */}
-        <div className="mb-4 text-center">
-          <button
-            onClick={() => navigate("/notifications")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition"
-          >
-            🔔 View Join Requests
-          </button>
-        </div>
-
-        {/* 📋 Group List */}
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Your Groups</h3>
-          {groups.length === 0 ? (
-            <p className="text-gray-500">You are not in any groups yet.</p>
-          ) : (
-            <ul className="space-y-3">
-              {groups.map((group) => (
-                <li
-                  key={group.id}
-                  onClick={() => navigate(`/groups/view/${group.id}`)}
-                  className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md hover:bg-blue-50 transition cursor-pointer"
-                >
-                  <h4 className="text-lg font-semibold text-blue-700">
+      {/* Group Cards */}
+      {groups.length === 0 ? (
+        <p className="text-gray-500 text-center">
+          You are not in any groups yet.
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 min-w-[1200px]">
+            {groups.map((group) => (
+              <div
+                key={group.id}
+                onClick={() => navigate(`/groups/view/${group.id}`)}
+                className="bg-white border rounded-xl shadow-sm hover:shadow-md transition h-[260px] p-4 flex flex-col justify-between cursor-pointer group"
+              >
+                <div>
+                  <h4 className="text-base font-semibold text-blue-700 mb-1 group-hover:underline">
                     {group.name}
                     {group.isPrivate && (
                       <span className="ml-2 text-sm text-purple-600">🔒</span>
                     )}
                   </h4>
-                  <p className="text-gray-600">{group.description}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Created by: {group.createdBy}
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {group.description || "No description provided."}
                   </p>
-                </li>
-              ))}
-            </ul>
-          )}
+                  <p className="text-xs text-gray-500">
+                    Created by: <br />
+                    {group.createdBy}
+                  </p>
+                </div>
+
+                <div className="flex justify-between items-center text-sm mt-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevents card click
+                      navigate(`/groups/chat/${group.id}`);
+                    }}
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    💬 Chat
+                  </button>
+
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation(); // prevents card click
+                      const confirmed = window.confirm(
+                        `Are you sure you want to delete "${group.name}"?`
+                      );
+                      if (!confirmed) return;
+
+                      try {
+                        await axios.delete(
+                          `http://localhost:8080/api/groups/delete/${group.id}`,
+                          { params: { userEmail: user.email } }
+                        );
+                        setGroups(groups.filter((g) => g.id !== group.id));
+                        setMessage(`✅ "${group.name}" deleted`);
+                      } catch (err) {
+                        const msg =
+                          err.response?.data?.message || "Delete failed.";
+                        alert("Error: " + msg);
+                      }
+                    }}
+                    className="text-red-500 hover:underline font-medium"
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

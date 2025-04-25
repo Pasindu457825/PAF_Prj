@@ -19,7 +19,10 @@ const ViewGroupsPage = () => {
       console.log(response.data); // Check the response structure in the console
       setGroups(response.data);
     } catch (err) {
-      console.error("Error fetching groups:", err);
+      console.error("Leave group error:", err); // 👈 for console inspection
+      const errorMessage =
+        err.response?.data?.message || err.response?.data || err.message;
+      alert("Error leaving group: " + errorMessage);
     }
   };
 
@@ -54,6 +57,26 @@ const ViewGroupsPage = () => {
     }
   };
 
+  const handleLeaveGroup = async (groupId) => {
+    if (!user?.email) return alert("User not logged in");
+
+    try {
+      await axios.post(
+        `http://localhost:8080/api/groups/${groupId}/leave`,
+        null,
+        {
+          params: { userEmail: user.email },
+        }
+      );
+      alert("You left the group.");
+      fetchGroups(); // Refresh group list
+    } catch (err) {
+      alert(
+        "Error leaving group: " + err.response?.data?.message || err.message
+      );
+    }
+  };
+
   return (
     <div className="min-h-screen p-6 bg-gray-100">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow">
@@ -85,12 +108,21 @@ const ViewGroupsPage = () => {
                 </p>
 
                 {group.memberIds.includes(user?.email) ? (
-                  <button
-                    className="mt-2 px-4 py-1 bg-green-600 text-white rounded cursor-default"
-                    disabled
-                  >
-                    Joined ✅
-                  </button>
+                  <div className="mt-2 space-y-2">
+                    <a
+                      href={`/groups/chat/${group.id}`}
+                      className="inline-block px-4 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+                    >
+                      Go to Chat 💬
+                    </a>
+                    <br />
+                    <button
+                      onClick={() => handleLeaveGroup(group.id)}
+                      className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                    >
+                      Leave Group ❌
+                    </button>
+                  </div>
                 ) : group.pendingRequests?.includes(user?.email) ? (
                   <button
                     className="mt-2 px-4 py-1 bg-yellow-500 text-white rounded cursor-default"

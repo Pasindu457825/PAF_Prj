@@ -13,11 +13,23 @@ import MyProfile from "./pages/pasindu/MyProfile";
 import ForgotPassword from "./pages/pasindu/reset_password/ForgotPassword"; // Import the page
 import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
 
+
+import PostList from "./pages/tharusha/PostList";
+import PostDetail from "./pages/tharusha/PostDetail";
+import CreatePost from "./pages/tharusha/CreatePost";
+import MyPosts from "./pages/tharusha/MyPosts";
+import EditPost from "./pages/tharusha/EditPost";
+
 //gropus
+import CreateGroupPage  from "./pages/pasindu/user_group/CreateGroupPage";
 import GroupsPage from "./pages/pasindu/user_group/GroupsPage";
 import GroupDetailPage from "./pages/pasindu/user_group/GroupDetailPage";
 import ViewGroupsPage from "./pages/pasindu/user_group/ViewGroupsPage";
 import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
+
+//gropus
+import GroupChat from "./pages/pasindu/group_chat/GroupChat";
+
 
 function App() {
   return (
@@ -37,11 +49,24 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
+
+          
+          <Route path="/create" element={<CreatePost />} />
+          <Route path="/posts" element={<PostList />} />
+        <Route path="/myposts" element={<MyPosts />} />
+        <Route path="/posts/:id" element={<PostDetail />} />
+        <Route path="/editpost/:id" element={<EditPost />} />
+
+
           {/* group */}
+          <Route path="/groups/create" element={<CreateGroupPage />} />
           <Route path="/groups/:userId" element={<GroupsPage />} />
           <Route path="/groups/view/:groupId" element={<GroupDetailPage />} />
           <Route path="/groups/view" element={<ViewGroupsPage />} />
           <Route path="/notifications" element={<GroupNotifications />} />
+
+          {/* group chat */}
+          <Route path="/groups/chat/:groupId" element={<GroupChat />} />
 
         </Routes>
       </BrowserRouter>
