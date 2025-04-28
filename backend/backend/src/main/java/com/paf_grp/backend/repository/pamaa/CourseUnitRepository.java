@@ -9,7 +9,7 @@ import com.paf_grp.backend.model.pamaa.Course;
 import com.paf_grp.backend.model.pamaa.CourseUnit;
 
 @Repository
-public interface CourseUnitRepository extends MongoRepository<CourseUnit, Long> {
+public interface CourseUnitRepository extends MongoRepository<CourseUnit, String> {
     List<CourseUnit> findByCourseOrderByOrderIndexAsc(Course course);
     int countByCourse(Course course);
 }
