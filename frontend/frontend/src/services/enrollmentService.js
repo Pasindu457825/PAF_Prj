@@ -1,11 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://localhost:8080/api/enrollments';
+const API_URL = "http://localhost:8080/api/enrollments";
 
 // Enroll in a course
 export const enrollInCourse = async (userId, courseId) => {
   try {
-    const response = await axios.post(API_URL, { userId, courseId });
+    const response = await axios.post(
+      API_URL,
+      { userId, courseId },
+      { withCredentials: true }
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -15,7 +19,9 @@ export const enrollInCourse = async (userId, courseId) => {
 // Get user enrollments
 export const getUserEnrollments = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}`);
+    const response = await axios.get(`${API_URL}/user/${userId}`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -45,7 +51,11 @@ export const getEnrollment = async (enrollmentId) => {
 // Update progress
 export const updateProgress = async (enrollmentId, progressData) => {
   try {
-    const response = await axios.put(`${API_URL}/${enrollmentId}/progress`, progressData);
+    const response = await axios.put(
+      `${API_URL}/${enrollmentId}/progress`,
+      progressData,
+      { withCredentials: true }
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -56,9 +66,9 @@ export const updateProgress = async (enrollmentId, progressData) => {
 export const findEnrollment = async (userId, courseId) => {
   try {
     const enrollments = await getUserEnrollments(userId);
-    const enrollment = enrollments.find(e => e.course.id === parseInt(courseId));
+    const enrollment = enrollments.find((e) => e.course.id === courseId);
     if (!enrollment) {
-      throw new Error('Enrollment not found');
+      throw new Error("Enrollment not found");
     }
     return enrollment;
   } catch (error) {
@@ -69,7 +79,9 @@ export const findEnrollment = async (userId, courseId) => {
 // Get user enrollment stats
 export const getUserEnrollmentStats = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}/stats`);
+    const response = await axios.get(`${API_URL}/user/${userId}/stats`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error;

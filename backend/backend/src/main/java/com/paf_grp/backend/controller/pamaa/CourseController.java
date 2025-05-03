@@ -105,7 +105,7 @@
         }
 
         // Get course by ID
-        @GetMapping("/{id}")
+        @GetMapping("/courses/{id}")
         public ResponseEntity<Course> getCourseById(@PathVariable String id) {
             Course course = courseRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
@@ -113,7 +113,7 @@
         }
 
         // Update course with file
-        @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        @PutMapping(value = "/courses/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
         public ResponseEntity<Course> updateCourse(
                 @PathVariable String id,
                 @RequestParam("title") String title,
@@ -179,7 +179,7 @@
         }
 
         // Delete course
-        @DeleteMapping("/{id}")
+        @DeleteMapping("/courses/{id}")
         public ResponseEntity<?> deleteCourse(@PathVariable String id, @RequestParam String userId) {
             Course course = courseRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
@@ -204,7 +204,7 @@
         }
 
         // Get courses by author
-        @GetMapping("/author/{authorId}")
+        @GetMapping("/courses/author/{authorId}")
         public List<Course> getCoursesByAuthor(@PathVariable String authorId) {
             User author = userRepository.findById(authorId)
                     .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
@@ -213,13 +213,13 @@
         }
 
         // Search courses by title
-        @GetMapping("/search")
+        @GetMapping("/courses/search")
         public List<Course> searchCourses(@RequestParam String query) {
             return courseRepository.findByTitleContainingIgnoreCase(query);
         }
 
         // Get units for a course
-        @GetMapping("/{courseId}/units")
+        @GetMapping("/courses/{courseId}/units")
         public List<CourseUnit> getCourseUnits(@PathVariable String courseId) {
             Course course = courseRepository.findById(courseId)
                     .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
@@ -228,7 +228,7 @@
         }
 
         // Get specific unit in a course
-        @GetMapping("/{courseId}/units/{unitIndex}")
+        @GetMapping("/courses/{courseId}/units/{unitIndex}")
         public CourseUnit getCourseUnit(@PathVariable String courseId, @PathVariable int unitIndex) {
             Course course = courseRepository.findById(courseId)
                     .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));

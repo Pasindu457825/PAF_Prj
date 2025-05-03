@@ -1,27 +1,27 @@
-import React, { useState, useContext, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../../context/AuthContext';
-import { createCourse } from '../../../services/courseService';
-import { FiUpload, FiFile, FiX } from 'react-icons/fi';
-import './Course.css';
+import React, { useState, useContext, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthContext";
+import { createCourse } from "../../../services/courseService";
+import { FiUpload, FiFile, FiX } from "react-icons/fi";
+import "./Course.css";
 
 const CourseCreation = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  
+
   const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    description: '',
-    units: [{ title: '', content: '' }]
+    title: "",
+    category: "",
+    description: "",
+    units: [{ title: "", content: "" }],
   });
-  
+
   const [pdfFile, setPdfFile] = useState(null);
-  const [pdfFileName, setPdfFileName] = useState('');
+  const [pdfFileName, setPdfFileName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   const categoryOptions = [
     { value: "", label: "Select a category" },
     { value: "programming", label: "Programming & Development" },
@@ -33,133 +33,139 @@ const CourseCreation = () => {
     { value: "technology", label: "Technology & Software" },
     { value: "science", label: "Science & Engineering" },
     { value: "health", label: "Health & Wellness" },
-    { value: "other", label: "Other" }
+    { value: "other", label: "Other" },
   ];
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
-  
+
   const handleUnitChange = (index, e) => {
     const { name, value } = e.target;
     const updatedUnits = [...formData.units];
     updatedUnits[index] = {
       ...updatedUnits[index],
-      [name]: value
+      [name]: value,
     };
-    
+
     setFormData({
       ...formData,
-      units: updatedUnits
+      units: updatedUnits,
     });
   };
-  
+
   const addUnit = () => {
     setFormData({
       ...formData,
-      units: [...formData.units, { title: '', content: '' }]
+      units: [...formData.units, { title: "", content: "" }],
     });
   };
-  
+
   const removeUnit = (index) => {
     const updatedUnits = formData.units.filter((_, i) => i !== index);
     setFormData({
       ...formData,
-      units: updatedUnits
+      units: updatedUnits,
     });
   };
-  
+
   const handlePdfUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       // Check if file is a PDF
-      if (file.type !== 'application/pdf') {
-        setError('Only PDF files are allowed');
+      if (file.type !== "application/pdf") {
+        setError("Only PDF files are allowed");
         return;
       }
-      
+
       // Check file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
-        setError('File size exceeds 10MB limit');
+        setError("File size exceeds 10MB limit");
         return;
       }
-      
+
       setPdfFile(file);
       setPdfFileName(file.name);
-      setError('');
+      setError("");
     }
   };
-  
+
   const removePdf = () => {
     setPdfFile(null);
-    setPdfFileName('');
+    setPdfFileName("");
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     // Validate
-    if (!formData.title.trim() || !formData.description.trim() || !formData.category) {
-      setError('Title, category, and description are required');
+    if (
+      !formData.title.trim() ||
+      !formData.description.trim() ||
+      !formData.category
+    ) {
+      setError("Title, category, and description are required");
       setLoading(false);
       return;
     }
-    
-    if (formData.units.some(unit => !unit.title.trim() || !unit.content.trim())) {
-      setError('All units must have a title and content');
+    if (
+      formData.units.some((unit) => !unit.title.trim() || !unit.content.trim())
+    ) {
+      setError("All units must have a title and content");
       setLoading(false);
       return;
     }
-    
+
     try {
       // Create FormData to handle file upload
       const courseFormData = new FormData();
-      courseFormData.append('title', formData.title);
-      courseFormData.append('category', formData.category);
-      courseFormData.append('description', formData.description);
-      courseFormData.append('authorId', user.id);
-      
+      courseFormData.append("title", formData.title);
+      courseFormData.append("category", formData.category);
+      courseFormData.append("description", formData.description);
+      courseFormData.append("authorId", user.id);
+
       // Add units as JSON string
-      courseFormData.append('units', JSON.stringify(formData.units));
-      
+      courseFormData.append("units", JSON.stringify(formData.units));
+
       // Add PDF file if present
       if (pdfFile) {
-        courseFormData.append('pdfFile', pdfFile);
+        courseFormData.append("pdfFile", pdfFile);
       }
-      
+
       const newCourse = await createCourse(courseFormData);
-      
+
       // Give the user options after creating a course
-      navigate('/dashboard', { 
-        state: { 
+      navigate("/dashboard", {
+        state: {
           newCourseCreated: true,
           courseId: newCourse.id,
           courseTitle: newCourse.title,
-          refreshCreatedCourses: true
-        } 
+          refreshCreatedCourses: true,
+        },
       });
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to create course');
+      console.log("error", error);
+      setError(error.response?.data?.message || "Failed to create course");
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="course-creation">
       <h1>Create a New Course</h1>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       <form onSubmit={handleSubmit} className="course-form">
         <div className="form-group">
           <label htmlFor="title">Course Title</label>
@@ -172,7 +178,7 @@ const CourseCreation = () => {
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="category">Course Category</label>
           <select
@@ -183,14 +189,14 @@ const CourseCreation = () => {
             className="category-select"
             required
           >
-            {categoryOptions.map(option => (
+            {categoryOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="pdfUpload">Course Materials (PDF)</label>
           <div className="pdf-upload-container">
@@ -214,8 +220,8 @@ const CourseCreation = () => {
               <div className="pdf-preview">
                 <FiFile className="pdf-icon" />
                 <span className="pdf-filename">{pdfFileName}</span>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="remove-pdf-btn"
                   onClick={removePdf}
                 >
@@ -225,7 +231,7 @@ const CourseCreation = () => {
             )}
           </div>
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="description">Course Description</label>
           <textarea
@@ -237,13 +243,13 @@ const CourseCreation = () => {
             required
           ></textarea>
         </div>
-        
+
         <h2>Course Units</h2>
-        
+
         {formData.units.map((unit, index) => (
           <div key={index} className="unit-container">
             <h3>Unit {index + 1}</h3>
-            
+
             <div className="form-group">
               <label htmlFor={`unit-title-${index}`}>Unit Title</label>
               <input
@@ -255,7 +261,7 @@ const CourseCreation = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor={`unit-content-${index}`}>Unit Content</label>
               <textarea
@@ -267,10 +273,10 @@ const CourseCreation = () => {
                 required
               ></textarea>
             </div>
-            
+
             {formData.units.length > 1 && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn-remove-unit"
                 onClick={() => removeUnit(index)}
               >
@@ -279,22 +285,18 @@ const CourseCreation = () => {
             )}
           </div>
         ))}
-        
-        <button 
-          type="button" 
-          className="btn-add-unit"
-          onClick={addUnit}
-        >
+
+        <button type="button" className="btn-add-unit" onClick={addUnit}>
           Add Another Unit
         </button>
-        
+
         <div className="form-actions">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-create-course"
             disabled={loading}
           >
-            {loading ? 'Creating...' : 'Create Course'}
+            {loading ? "Creating..." : "Create Course"}
           </button>
         </div>
       </form>

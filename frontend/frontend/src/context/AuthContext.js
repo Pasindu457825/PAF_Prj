@@ -1,14 +1,30 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
 const getCurrentUser = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/auth/current-user', { withCredentials: true }); // Ensure correct URL
+    const response = await axios.get(
+      "http://localhost:8080/api/auth/current-user",
+      { withCredentials: true }
+    ); // Ensure correct URL
     return response.data;
   } catch (error) {
-    console.error('Error fetching current user:', error);
+    console.error("Error fetching current user:", error);
+    return null;
+  }
+};
+
+const login = async (creds) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/login",
+      creds
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching current user:", error);
     return null;
   }
 };
@@ -27,13 +43,18 @@ export const AuthProvider = ({ children }) => {
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error('Error checking authentication:', error);
+        console.error("Error checking authentication:", error);
       } finally {
         setLoading(false);
       }
     };
+    // checkLoggedIn();
 
-    checkLoggedIn();
+    const localStUser = JSON.parse(sessionStorage.getItem("user"));
+    if (localStUser) {
+      setUser(localStUser);
+      setIsAuthenticated(true);
+    }
   }, []);
 
   const loginUser = async (credentials) => {
@@ -41,7 +62,7 @@ export const AuthProvider = ({ children }) => {
       const userData = await login(credentials);
       setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem('userId', userData.id);
+      localStorage.setItem("userId", userData.id);
       return userData;
     } catch (error) {
       throw error;
@@ -53,7 +74,7 @@ export const AuthProvider = ({ children }) => {
       const newUser = await register(userData);
       setUser(newUser);
       setIsAuthenticated(true);
-      localStorage.setItem('userId', newUser.id);
+      localStorage.setItem("userId", newUser.id);
       return newUser;
     } catch (error) {
       throw error;
@@ -63,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('userId');
+    localStorage.removeItem("userId");
   };
 
   return (
@@ -74,7 +95,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login: loginUser,
         register: registerUser,
-        logout
+        logout,
       }}
     >
       {children}

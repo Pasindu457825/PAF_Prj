@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Course.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Course.css";
 
 const CourseCard = ({ course }) => {
   // Check if course object has required properties
@@ -10,9 +10,11 @@ const CourseCard = ({ course }) => {
 
   // Extract properties with defaults to prevent errors
   const { id, title, description = "No description available" } = course;
-  
+
   // Safe access to nested properties
-  const authorName = course.author?.name || "Unknown author";
+  const authorName =
+    `${course.author?.firstName} ${course.author?.lastName}` ||
+    "Unknown author";
   const unitsCount = course.units?.length || 0;
 
   return (
@@ -21,17 +23,14 @@ const CourseCard = ({ course }) => {
         <h3>{title}</h3>
       </div>
       <div className="course-card-body">
-        <p>{description.length > 100 
-          ? `${description.substring(0, 100)}...` 
-          : description}
+        <p>
+          {description.length > 100
+            ? `${description.substring(0, 100)}...`
+            : description}
         </p>
         <div className="course-meta">
-          <span className="units-count">
-            {unitsCount} units
-          </span>
-          <span className="author">
-            By {authorName}
-          </span>
+          <span className="units-count">{unitsCount} units</span>
+          <span className="author">By {authorName}</span>
         </div>
       </div>
       <div className="course-card-footer">

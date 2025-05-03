@@ -1,11 +1,17 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://localhost:8080/api/certificates';
+const API_URL = "http://localhost:8080/api/certificates";
 
 // Generate a certificate
 export const generateCertificate = async (userId, courseId) => {
   try {
-    const response = await axios.post(API_URL, { userId, courseId });
+    const response = await axios.post(
+      `${API_URL}/generate`,
+      { userId, courseId },
+      {
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -15,7 +21,9 @@ export const generateCertificate = async (userId, courseId) => {
 // Get user certificates
 export const getUserCertificates = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}`);
+    const response = await axios.get(`${API_URL}/user/${userId}`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -25,7 +33,9 @@ export const getUserCertificates = async (userId) => {
 // Get certificate by ID
 export const getCertificate = async (certificateId) => {
   try {
-    const response = await axios.get(`${API_URL}/${certificateId}`);
+    const response = await axios.get(`${API_URL}/${certificateId}`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -35,7 +45,9 @@ export const getCertificate = async (certificateId) => {
 // Verify certificate
 export const verifyCertificate = async (certificateNumber) => {
   try {
-    const response = await axios.get(`${API_URL}/verify/${certificateNumber}`);
+    const response = await axios.get(`${API_URL}/verify/${certificateNumber}`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     throw error;

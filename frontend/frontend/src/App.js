@@ -14,7 +14,6 @@ import MyProfile from "./pages/pasindu/MyProfile";
 import ForgotPassword from "./pages/pasindu/reset_password/ForgotPassword"; // Import the page
 import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
 
-
 import PostList from "./pages/tharusha/PostList";
 import PostDetail from "./pages/tharusha/PostDetail";
 import CreatePost from "./pages/tharusha/CreatePost";
@@ -36,7 +35,7 @@ import CourseDetails from "./components/pamaa/Course/CourseDetails";
 import CourseCreation from "./components/pamaa/Course/CourseCreation";
 import CourseEdit from "./components/pamaa/Course/CourseEdit";
 import CourseView from "./components/pamaa/Course/CourseView";
-import CertificateDownload from "./components/pamaa/Certificate/CertificateDownload"
+import CertificateDownload from "./components/pamaa/Certificate/CertificateDownload";
 import CertificatesList from "./components/pamaa/Certificate/CertificatesList";
 import Dashboard from "./components/pamaa/Dashboard/Dashboard";
 import LearningNavBar from "./components/pamaa/LearningNavBar";
@@ -59,14 +58,11 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-
-          
           <Route path="/create" element={<CreatePost />} />
           <Route path="/posts" element={<PostList />} />
-        <Route path="/myposts" element={<MyPosts />} />
-        <Route path="/posts/:id" element={<PostDetail />} />
-        <Route path="/editpost/:id" element={<EditPost />} />
-
+          <Route path="/myposts" element={<MyPosts />} />
+          <Route path="/posts/:id" element={<PostDetail />} />
+          <Route path="/editpost/:id" element={<EditPost />} />
 
           {/* group */}
           <Route path="/groups/:userId" element={<GroupsPage />} />
@@ -77,7 +73,7 @@ function App() {
           {/* group chat */}
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
 
-           {/* Learning */}
+          {/* Learning */}
           <Route
             path="courses/*"
             element={
@@ -109,7 +105,10 @@ function App() {
                 <LearningNavBar />
                 <Routes>
                   <Route index element={<CertificatesList />} />
-                  <Route path=":certificateId" element={<CertificateDownload />} />
+                  <Route
+                    path=":certificateId"
+                    element={<CertificateDownload />}
+                  />
                 </Routes>
               </>
             }
