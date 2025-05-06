@@ -165,7 +165,9 @@
 
                     if (unitTitle != null && unitContent != null) {
                         CourseUnit unit = new CourseUnit(unitTitle, unitContent, orderIndex++);
+                        unit.setCourse(course);
                         course.addUnit(unit);
+                        courseUnitRepository.save(unit);
                     }
                 }
             }

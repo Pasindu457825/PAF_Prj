@@ -16,7 +16,7 @@ const CourseCreation = () => {
     description: "",
     units: [{ title: "", content: "" }],
   });
-
+  console.log("user", user);
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfFileName, setPdfFileName] = useState("");
   const [loading, setLoading] = useState(false);

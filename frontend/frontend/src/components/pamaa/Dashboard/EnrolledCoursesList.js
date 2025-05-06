@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Dashboard.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Dashboard.css";
 
 const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
   // Create a map of course IDs to certificates for easy lookup
   const certificateMap = certificates.reduce((map, cert) => {
-    map[cert.course.id] = cert;
+    map[cert?.course?.id] = cert;
     return map;
   }, {});
 
@@ -15,25 +15,28 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
 
       {enrolledCourses.length > 0 ? (
         <div className="courses-grid">
-          {enrolledCourses.map(enrollment => {
+          {enrolledCourses.map((enrollment) => {
             const course = enrollment.course;
-            const hasCertificate = certificateMap.hasOwnProperty(course.id);
-            const totalUnits = course.units ? course.units.length : 0;
+            const hasCertificate = certificateMap.hasOwnProperty(course?.id);
+            const totalUnits = course?.units ? course?.units.length : 0;
             const completedUnits = enrollment.lastCompletedUnit + 1;
-            const progressPercentage = totalUnits > 0 
-              ? Math.min(Math.round((completedUnits / totalUnits) * 100), 100)
-              : 0;
-            
+            const progressPercentage =
+              totalUnits > 0
+                ? Math.min(Math.round((completedUnits / totalUnits) * 100), 100)
+                : 0;
+
             return (
               <div key={enrollment.id} className="course-card">
                 <div className="course-card-content">
-                  <h3>{course.title}</h3>
+                  <h3>{course?.title}</h3>
                   <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
+                    <div
+                      className="progress-bar"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
-                    <span className="progress-text">{progressPercentage}% Complete</span>
+                    <span className="progress-text">
+                      {progressPercentage}% Complete
+                    </span>
                   </div>
                   <p className="units-progress">
                     Completed {completedUnits} of {totalUnits} units
@@ -42,23 +45,23 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
                 <div className="course-card-actions">
                   {enrollment.completed ? (
                     hasCertificate ? (
-                      <Link 
-                        to={`/certificates/${certificateMap[course.id].id}`} 
+                      <Link
+                        to={`/certificates/${certificateMap[course?.id]?.id}`}
                         className="btn-certificate"
                       >
                         View Certificate
                       </Link>
                     ) : (
-                      <Link 
-                        to={`/courses/view/${course.id}`} 
+                      <Link
+                        to={`/courses/view/${course?.id}`}
                         className="btn-generate-certificate"
                       >
                         Get Certificate
                       </Link>
                     )
                   ) : (
-                    <Link 
-                      to={`/courses/view/${course.id}`} 
+                    <Link
+                      to={`/courses/view/${course?.id}`}
                       className="btn-continue"
                     >
                       Continue Learning

@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
       const userData = await login(credentials);
       setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem("userId", userData.id);
+      localStorage.setItem("user", userData);
       return userData;
     } catch (error) {
       throw error;
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem("userId");
+    localStorage.removeItem("user");
   };
 
   return (
