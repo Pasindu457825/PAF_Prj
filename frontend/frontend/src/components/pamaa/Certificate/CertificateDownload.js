@@ -14,9 +14,9 @@ const CertificateDownload = () => {
   const [generating, setGenerating] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [downloadOptions, setDownloadOptions] = useState({
-    quality: "high", // high or standard
-    format: "pdf", // pdf or png
-    paperSize: "a4", // a4 or letter
+    quality: "high",
+    format: "pdf",
+    paperSize: "a4",
   });
 
   const certificateRef = useRef(null);
@@ -41,12 +41,8 @@ const CertificateDownload = () => {
     if (!certificateRef.current) return;
 
     setGenerating(true);
-
     try {
-      // Ensure proper dimensions when capturing the certificate
       const certificateElement = certificateRef.current;
-
-      // Configure canvas options based on quality setting
       const scale = downloadOptions.quality === "high" ? 4 : 2;
 
       const canvas = await html2canvas(certificateElement, {
@@ -59,13 +55,12 @@ const CertificateDownload = () => {
         width: certificateElement.offsetWidth,
         height: certificateElement.offsetHeight,
         onclone: (document) => {
-          // Add print-specific styles to the cloned document
           const styleEl = document.createElement("style");
           styleEl.innerHTML = `
             .certificate {
               box-shadow: none !important;
               border: none !important;
-              height: 566px !important; /* Force correct height */
+              height: 566px !important;
               overflow: hidden !important;
             }
             .certificate::before {
@@ -79,45 +74,30 @@ const CertificateDownload = () => {
         },
       });
 
+      const titleSafe = certificate?.course?.title || "Untitled-Course";
+
       if (downloadOptions.format === "png") {
-        // Download as PNG
         const link = document.createElement("a");
-        link.download = `Certificate-${certificate.course.title}.png`;
+        link.download = `Certificate-${titleSafe}.png`;
         link.href = canvas.toDataURL("image/png", 1.0);
         link.click();
       } else {
-        // Download as PDF
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
 
-        // Choose PDF dimensions based on paper size setting
         let pdfWidth, pdfHeight;
-        if (downloadOptions.paperSize === "letter") {
-          // US Letter size (215.9mm x 279.4mm)
-          const pdf = new jsPDF({
-            orientation: "landscape",
-            unit: "mm",
-            format: "letter",
-          });
-          pdfWidth = pdf.internal.pageSize.getWidth();
-          pdfHeight = pdf.internal.pageSize.getHeight();
+        const format = downloadOptions.paperSize === "letter" ? "letter" : "a4";
 
-          // Add image to PDF
-          pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`Certificate-${certificate.course.title}.pdf`);
-        } else {
-          // A4 size (210mm x 297mm)
-          const pdf = new jsPDF({
-            orientation: "landscape",
-            unit: "mm",
-            format: "a4",
-          });
-          pdfWidth = pdf.internal.pageSize.getWidth();
-          pdfHeight = pdf.internal.pageSize.getHeight();
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format,
+        });
 
-          // Add image to PDF
-          pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`Certificate-${certificate.course.title}.pdf`);
-        }
+        pdfWidth = pdf.internal.pageSize.getWidth();
+        pdfHeight = pdf.internal.pageSize.getHeight();
+
+        pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Certificate-${titleSafe}.pdf`);
       }
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -151,20 +131,22 @@ const CertificateDownload = () => {
     return <div className="error-message">Certificate not found</div>;
   }
 
-  const issueDate = new Date(certificate.issueDate).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-  );
+  const issueDate = certificate.issueDate
+    ? new Date(certificate.issueDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "Unknown Issue Date";
 
   return (
     <div className="certificate-download-container">
       <div className="certificate-title-area">
         <h1>Your Certificate of Achievement</h1>
-        <p>Congratulations on completing {certificate.course.title}</p>
+        <p>
+          Congratulations on completing{" "}
+          {certificate.course?.title || "Untitled Course"}
+        </p>
       </div>
 
       <div className="certificate-actions">
@@ -247,11 +229,12 @@ const CertificateDownload = () => {
                 This Certificate is Proudly Presented To
               </p>
               <p className="certificate-name">
-                {certificate.user.firstName} {certificate.user.lastName}
+                {certificate.user?.firstName || "First Name"}{" "}
+                {certificate.user?.lastName || "Last Name"}
               </p>
               <p className="certificate-description">
                 For successfully completing the course{" "}
-                <strong>{certificate.course.title}</strong>
+                <strong>{certificate.course?.title || "Untitled Course"}</strong>
               </p>
               <p className="certificate-date">Issued on {issueDate}</p>
             </div>

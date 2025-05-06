@@ -28,7 +28,7 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
             return (
               <div key={enrollment.id} className="course-card">
                 <div className="course-card-content">
-                  <h3>{course?.title}</h3>
+                  <h3>{course?.title || "Deleted Course"}</h3>
                   <div className="progress-container">
                     <div
                       className="progress-bar"
@@ -42,8 +42,13 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
                     Completed {completedUnits} of {totalUnits} units
                   </p>
                 </div>
+
                 <div className="course-card-actions">
-                  {enrollment.completed ? (
+                  {!course?.title ? (
+                    <p className="text-red-500 italic">
+                      This course has been deleted
+                    </p>
+                  ) : enrollment.completed ? (
                     hasCertificate ? (
                       <Link
                         to={`/certificates/${certificateMap[course?.id]?.id}`}

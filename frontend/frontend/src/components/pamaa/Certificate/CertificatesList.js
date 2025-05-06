@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { GiMedal } from 'react-icons/gi'; // Changed from GiAchievement to GiMedal
+import { GiMedal } from 'react-icons/gi';
 import { FiEye, FiInfo } from 'react-icons/fi';
 import { AuthContext } from '../../../context/AuthContext';
 import { getUserCertificates } from '../../../services/certificateService';
@@ -84,16 +84,23 @@ const CertificatesList = () => {
               }}
             >
               <div className="certificate-card-header">
-                <GiMedal size={24} className="text-gold mb-2" /> {/* Changed to GiMedal with gold color */}
-                <h3>{certificate.course.title}</h3>
+                <GiMedal size={24} className="text-gold mb-2" />
+                <h3>
+                  {certificate.course?.title || "This course has been deleted"}
+                </h3>
               </div>
+
               <div className="certificate-card-body">
-                <p>Issued on: {new Date(certificate.issueDate).toLocaleDateString()}</p>
+                <p>
+                  Issued on:{" "}
+                  {new Date(certificate.issueDate).toLocaleDateString()}
+                </p>
                 <p className="flex items-center gap-1 text-gray-500 mt-2">
                   <FiInfo size={16} />
                   Certificate ID: {certificate.certificateNumber.substring(0, 8)}...
                 </p>
               </div>
+
               <motion.div 
                 className="certificate-card-footer"
                 whileHover={{ backgroundColor: "#f0f7ff" }}
@@ -115,7 +122,7 @@ const CertificatesList = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <GiMedal size={64} className="text-gray-400 mb-4" /> {/* Changed to GiMedal */}
+          <GiMedal size={64} className="text-gray-400 mb-4" />
           <p>You haven't earned any certificates yet.</p>
           <p>Complete courses to earn certificates!</p>
           <Link to="/dashboard" className="btn-primary mt-4">
