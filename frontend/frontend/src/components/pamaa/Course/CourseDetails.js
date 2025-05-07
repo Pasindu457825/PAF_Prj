@@ -129,7 +129,9 @@ const CourseDetails = () => {
   } = course;
 
   // Safe access for author name
-  const authorName = course.author?.name || "Unknown author";
+  const authorName =
+    `${course.author?.firstName} ${course.author?.lastName}` ||
+    "Unknown author";
 
   // Ensure units is always an array
   const courseUnits = Array.isArray(units) ? units : [];
