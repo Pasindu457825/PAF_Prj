@@ -31,6 +31,10 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
 import NotificationPage from './pages/isuri/Notification/NotificationPage'
+import CommentList from "./pages/isuri/Comment/CommentList";
+import EditComment from './pages/isuri/Comment/EditComment';
+import EditCommentForm from "./pages/isuri/Comment/EditCommentForm"; // Only if used as a separate component
+
 //follow
 import AllUsers from "./pages/isuri/Follow/AllUsers";
 import FollowdUsers from "./pages/isuri/Follow/FollowUsers";
@@ -74,6 +78,9 @@ function App() {
           <Route path="/notificationsPage" element={<NotificationPage />} />
           <Route path="/allUsers" element={<AllUsers />} />
           <Route path="/followdUsers" element={<FollowdUsers />} />
+          <Route path="/comments" element={<CommentList />} />
+          <Route path="/comments/edit/:commentId" element={<EditComment />} />
+
         </Routes>
       </BrowserRouter>
     </div>
