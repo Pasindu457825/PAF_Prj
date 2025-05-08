@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AllUsers() {
   const [users, setUsers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState([]);
 
   const loggedInUserId = localStorage.getItem('userId');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:8080/api/users')
@@ -29,6 +33,12 @@ function AllUsers() {
       .then((response) => response.json())
       .then(() => {
         setFollowedUsers((prev) => [...prev, userId]);
+
+        toast.success("Followed successfully! Redirecting...", {
+          position: "top-right",
+          autoClose: 1500,
+          onClose: () => navigate('/followdUsers') // redirect after toast
+        });
       });
   };
 
@@ -72,6 +82,7 @@ function AllUsers() {
           ))}
         </tbody>
       </table>
+      <ToastContainer />
     </div>
   );
 }

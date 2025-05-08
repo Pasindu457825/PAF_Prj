@@ -86,6 +86,8 @@ function App() {
           <Route path="/notificationsPage" element={<NotificationPage />} />
           <Route path="/allUsers" element={<AllUsers />} />
           <Route path="/followdUsers" element={<FollowdUsers />} />
+          <Route path="/certificates" element={<CertificatesList />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
