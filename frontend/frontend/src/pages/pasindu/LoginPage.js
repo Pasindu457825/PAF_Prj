@@ -27,6 +27,12 @@ const Login = () => {
       );
 
       console.log("Login Success:", res.data);
+
+      // Save user details and login time in local storage
+      const { id, fullName } = res.data;
+      localStorage.setItem("userId", id);
+      localStorage.setItem("loginTime", new Date().toISOString());
+
       sessionStorage.setItem("user", JSON.stringify(res.data));
 
       // ✅ SweetAlert for success
