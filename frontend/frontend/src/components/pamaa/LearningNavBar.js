@@ -96,7 +96,7 @@ const LearningNavBar = () => {
               <a
                 key={index}
                 href={item.path}
-                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-50"
+                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium hover:bg-blue-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.icon}
