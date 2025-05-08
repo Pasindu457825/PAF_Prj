@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, BrowserRouter, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
-import { AuthProvider } from "./context/AuthContext"; // Import the correct export
 
 //user
 import CreateUser from "./pages/pasindu/CreateUser";
@@ -13,6 +12,7 @@ import MyProfile from "./pages/pasindu/MyProfile";
 //password
 import ForgotPassword from "./pages/pasindu/reset_password/ForgotPassword"; // Import the page
 import ResetPassword from "./pages/pasindu/reset_password/ResetPassword";
+
 
 import PostList from "./pages/tharusha/PostList";
 import PostDetail from "./pages/tharusha/PostDetail";
@@ -30,20 +30,10 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 //gropus
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
-// Learning
-import CourseList from "./components/pamaa/Course/CourseList";
-import CourseDetails from "./components/pamaa/Course/CourseDetails";
-import CourseCreation from "./components/pamaa/Course/CourseCreation";
-import CourseEdit from "./components/pamaa/Course/CourseEdit";
-import CourseView from "./components/pamaa/Course/CourseView";
-import CertificateDownload from "./components/pamaa/Certificate/CertificateDownload";
-import CertificatesList from "./components/pamaa/Certificate/CertificatesList";
-import Dashboard from "./components/pamaa/Dashboard/Dashboard";
-import LearningNavBar from "./components/pamaa/LearningNavBar";
 
 function App() {
   return (
-    <AuthProvider>
+    <div>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -59,11 +49,14 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
+
+          
           <Route path="/create" element={<CreatePost />} />
           <Route path="/posts" element={<PostList />} />
-          <Route path="/myposts" element={<MyPosts />} />
-          <Route path="/posts/:id" element={<PostDetail />} />
-          <Route path="/editpost/:id" element={<EditPost />} />
+        <Route path="/myposts" element={<MyPosts />} />
+        <Route path="/posts/:id" element={<PostDetail />} />
+        <Route path="/editpost/:id" element={<EditPost />} />
+
 
           {/* group */}
           <Route path="/groups/create" element={<CreateGroupPage />} />
@@ -75,49 +68,9 @@ function App() {
           {/* group chat */}
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
 
-          {/* Learning */}
-          <Route
-            path="courses/*"
-            element={
-              <>
-                <LearningNavBar />
-                <Routes>
-                  <Route index element={<CourseList />} />
-                  <Route path=":courseId" element={<CourseDetails />} />
-                  <Route path="create" element={<CourseCreation />} />
-                  <Route path="edit/:courseId" element={<CourseEdit />} />
-                  <Route path="view/:courseId" element={<CourseView />} />
-                </Routes>
-              </>
-            }
-          />
-          <Route
-            path="dashboard"
-            element={
-              <>
-                <LearningNavBar />
-                <Dashboard />
-              </>
-            }
-          />
-          <Route
-            path="certificates/*"
-            element={
-              <>
-                <LearningNavBar />
-                <Routes>
-                  <Route index element={<CertificatesList />} />
-                  <Route
-                    path=":certificateId"
-                    element={<CertificateDownload />}
-                  />
-                </Routes>
-              </>
-            }
-          />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
+    </div>
   );
 }
 

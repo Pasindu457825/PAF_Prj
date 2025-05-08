@@ -29,6 +29,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody User loginRequest, HttpServletRequest request) {
         // 1) Find user by email
         User user = userRepository.findByEmailIgnoreCase(loginRequest.getEmail());
+
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ User not found!");
         }
