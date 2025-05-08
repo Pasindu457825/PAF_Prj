@@ -36,45 +36,29 @@ public class SecurityConfig {
 
     // 4) SecurityFilterChain using lambda-style configuration
     @Bean
-
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Register our custom DaoAuthenticationProvider
         http.authenticationProvider(authProvider());
 
         http
-                // CSRF disabled for development; handle properly in production
                 .csrf(csrf -> csrf.disable())
-                // Authorization rules in lambda style
                 .authorizeHttpRequests(auth -> {
-                    // Permit these endpoints without authentication
                     auth.requestMatchers(
-                            "/api/users",
-                            "/api/users/update/**",
                             "/api/users/**",
-                            "/details/**",
                             "/api/auth/**",
-                            "/api/notifications/**",
-                            "/login"  // if you have a custom login page
+                            "/api/groups/**",
+                            "/api/messages/**",// ✅ Add if public
+                            "/login"              // Or remove this if unused
                     ).permitAll();
 
-                    // Require authentication for /api/posts/**
-                    auth.requestMatchers("/api/posts/**").authenticated();
-
-                    // All other endpoints also require authentication
                     auth.anyRequest().authenticated();
                 })
-                // Form login in lambda style
-                .formLogin(form -> form
-                        .loginPage("/login") // if you have a custom HTML login page
-                        .permitAll()
-                )
-                // Logout in lambda style
+                .formLogin(form -> form.disable())  // ✅ DISABLE form login for API
+                .httpBasic(Customizer.withDefaults()) // ✅ Optional for testing
                 .logout(logout -> logout.permitAll())
-                // Enable CORS with default settings (or customize if needed)
                 .cors(Customizer.withDefaults());
-
 
         return http.build();
     }
+
 
 }
