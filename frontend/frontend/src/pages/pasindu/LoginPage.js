@@ -14,12 +14,13 @@ const Login = () => {
   // In real app, these would be imported from react-router-dom and axios/sweetalert2
   const navigate = useNavigate();
 
-  
-
-const handleLoginRequest = async (credentials) => {
-  const response = await axios.post("http://localhost:8080/api/auth/login", credentials);
-  return response.data;
-};
+  const handleLoginRequest = async (credentials) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/login",
+      credentials
+    );
+    return response.data;
+  };
 
   const showAlert = (config) => console.log("Alert:", config);
 
@@ -59,6 +60,7 @@ const handleLoginRequest = async (credentials) => {
       localStorage.setItem("userId", userData.id);
       localStorage.setItem("loginTime", new Date().toISOString());
       sessionStorage.setItem("user", JSON.stringify(userData));
+      window.dispatchEvent(new Event("storage"));
 
       // Success alert
       showAlert({
