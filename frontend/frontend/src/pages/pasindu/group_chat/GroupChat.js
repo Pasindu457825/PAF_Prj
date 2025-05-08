@@ -26,7 +26,10 @@ const GroupChat = () => {
   const fetchMessages = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/messages/${groupId}`
+        `http://localhost:8080/api/messages/${groupId}`,
+        {
+          params: { userEmail: user.email }, // ✅ send user email if required
+        }
       );
       setMessages(res.data);
     } catch (err) {
