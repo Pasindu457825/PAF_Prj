@@ -55,8 +55,8 @@ const LearningNavBar = () => {
     },
     {
       icon: <PlusCircle className="w-5 h-5" />,
-      title: "Create",
-      path: "/courses/create",
+      title: "Posts",
+      path: "/myposts",
     },
     {
       icon: <Award className="w-5 h-5" />,
