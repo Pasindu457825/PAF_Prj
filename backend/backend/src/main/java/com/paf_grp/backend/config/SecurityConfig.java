@@ -51,7 +51,10 @@ public class SecurityConfig {
                             "/api/messages/**",// ✅ Add if public
                             "/login",            // Or remove this if unused
 
-                            "/api/notifications/**"
+                            "/api/notifications/**",
+                            "/api/courses/**",
+                            "/api/enrollments/**",
+                            "/api/certificates/**"
 
                     ).permitAll();
 
