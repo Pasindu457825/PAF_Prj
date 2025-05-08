@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getNotifications, markAsRead, saveNotificationToLocalStorage } from "./NotificationService";
+import {
+  getNotifications,
+  markAsRead,
+  saveNotificationToLocalStorage,
+} from "./NotificationService";
 
 function NotificationPage() {
   const [notifications, setNotifications] = useState([]);
@@ -24,49 +28,53 @@ function NotificationPage() {
   }, []);
 
   const handleNotificationClick = async (notification) => {
-    // Mark as read
     if (!notification.isRead) {
       await markAsRead(notification.id);
-      setNotifications(prev =>
-        prev.map(n =>
+      setNotifications((prev) =>
+        prev.map((n) =>
           n.id === notification.id ? { ...n, isRead: true } : n
         )
       );
     }
-    // Save to local storage
     saveNotificationToLocalStorage(notification);
-    // Navigate to post
     navigate(`/post/${notification.postId}`);
   };
 
-  if (loading) return <div>Loading notifications...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
-
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Notifications</h1>
-      
-      {notifications.length === 0 ? (
-        <p className="text-gray-500">No notifications yet</p>
-      ) : (
-        <div className="space-y-3">
-          {notifications.map((notification) => (
-            <div
-              key={notification.id}
-              className={`p-4 rounded-lg cursor-pointer transition-colors ${
-                notification.isRead
-                  ? "bg-white"
-                  : "bg-blue-50 border-l-4 border-blue-500"
-              } hover:bg-gray-100`}
-            >
-              <p className="font-medium">{notification.message}</p>
-              <p className="text-sm text-gray-500">
-                {new Date(notification.createdAt).toLocaleString()}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="min-h-screen bg-blue-100 p-6">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
+        <h1 className="text-3xl font-bold mb-6 text-blue-800">
+          🔔 Notifications
+        </h1>
+
+        {loading && <p className="text-gray-600">Loading notifications...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {notifications.length === 0 ? (
+          <p className="text-gray-600">No notifications yet</p>
+        ) : (
+          <div className="space-y-4">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                onClick={() => handleNotificationClick(notification)}
+                className={`p-4 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow-md ${
+                  notification.isRead
+                    ? "bg-gray-100"
+                    : "bg-blue-50 border-l-4 border-blue-500"
+                }`}
+              >
+                <p className="font-medium text-gray-800">
+                  {notification.message}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {new Date(notification.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -13,9 +13,10 @@ import {
   UserPlus,
   PenTool,
 } from "lucide-react";
-
+import { getUnreadCount } from "../isuri/Notification/NotificationService";
 const MyProfile = () => {
   const [user, setUser] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +27,18 @@ const MyProfile = () => {
       setUser(JSON.parse(storedUser));
     }
   }, [navigate]);
+  
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const count = await getUnreadCount();
+        setUnreadCount(count);
+      } catch (err) {
+        console.error("Failed to fetch unread count", err);
+      }
+    };
+    fetchUnread();
+  }, []);
 
   const handleDelete = async () => {
     if (
@@ -170,7 +183,7 @@ const MyProfile = () => {
                   <Bell size={20} className="text-yellow-600" />
                 </div>
                 <h3 className="ml-3 font-medium text-gray-800">
-                  Notifications
+                  Notifications {unreadCount > 0 && `(${unreadCount})`}
                 </h3>
               </div>
               <p className="text-sm text-gray-500">
