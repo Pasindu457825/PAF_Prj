@@ -180,14 +180,15 @@ function PostList() {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
-    
-    if (diffInSeconds < 60) return ${diffInSeconds}s ago;
-    if (diffInSeconds < 3600) return ${Math.floor(diffInSeconds / 60)}m ago;
-    if (diffInSeconds < 86400) return ${Math.floor(diffInSeconds / 3600)}h ago;
-    if (diffInSeconds < 604800) return ${Math.floor(diffInSeconds / 86400)}d ago;
-    
-    return new Date(dateString).toLocaleDateString();
+  
+    if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  
+    return date.toLocaleDateString();
   };
+  
 
   const renderMediaIndicator = (post) => {
     if (!post.mediaUrls?.length) return null;
@@ -388,7 +389,8 @@ function PostList() {
           >
             {/* Header */}
             <div className="flex items-center p-4">
-              <Link to={/profile/${post.userId}} className="flex items-center flex-shrink-0">
+            <Link to={`/profile/${post.userId}`} className="flex items-center flex-shrink-0">
+
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white overflow-hidden flex items-center justify-center">
                   {post.userAvatar ? (
                     <img
@@ -440,7 +442,8 @@ function PostList() {
                       key={idx}
                       className="inline-block bg-blue-50 text-blue-700 rounded-full px-2 py-0.5 text-xs font-medium"
                     >
-                      {tag.startsWith('#') ? tag : #${tag}}
+                      {tag.startsWith('#') ? tag : `#${tag}`}
+
                     </span>
                   ))}
                 </div>
@@ -468,7 +471,7 @@ function PostList() {
                       ) : (
                         <img
                           src={url}
-                          alt={media-${idx}}
+                          alt={`media-${idx}`}
                           className="w-full h-auto max-h-96 object-contain"
                         />
                       )}
@@ -528,9 +531,10 @@ function PostList() {
                 }`}
               >
                 <Heart
-                  className={h-5 w-5 mr-1.5 ${likedPosts[post.id] ? "fill-current animate-pulse" : ""}}
-                  size={20}
-                />
+  className={`h-5 w-5 mr-1.5 ${likedPosts[post.id] ? "fill-current animate-pulse" : ""}`}
+  size={20}
+/>
+
                 <span className="text-sm font-medium">
                   {post.likes
                     ? post.likes.length + (likedPosts[post.id] ? 1 : 0)
@@ -556,9 +560,10 @@ function PostList() {
                 }`}
               >
                 <Bookmark
-                  className={h-5 w-5 ${savedPosts[post.id] ? "fill-current" : ""}}
-                  size={20}
-                />
+  className={`h-5 w-5 ${savedPosts[post.id] ? "fill-current" : ""}`}
+  size={20}
+/>
+
               </button>
             </div>
 
@@ -576,11 +581,12 @@ function PostList() {
                   ))}
                   {comments[post.id].length > 2 && (
                     <Link
-                      to={/post/${post.id}}
-                      className="text-sm text-gray-500 hover:text-gray-700 font-medium"
-                    >
-                      View all {comments[post.id].length} comments
-                    </Link>
+                    to={`/post/${post.id}`}
+                    className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                  >
+                    View all {comments[post.id].length} comments
+                  </Link>
+                  
                   )}
                 </div>
               )}
@@ -612,12 +618,13 @@ function PostList() {
 
             {/* Details link */}
             <div className="px-4 py-3 border-t border-gray-100 flex justify-between items-center">
-              <Link
-                to={/post/${post.id}}
-                className="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center"
-              >
-                View Details
-              </Link>
+            <Link
+  to={`/post/${post.id}`}
+  className="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center"
+>
+  View Details
+</Link>
+
               
               <div className="text-xs text-gray-500">
                 <Calendar className="h-3 w-3 inline mr-1" />
