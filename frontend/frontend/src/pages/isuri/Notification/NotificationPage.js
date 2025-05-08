@@ -5,6 +5,7 @@ import {
   markAsRead,
   saveNotificationToLocalStorage,
 } from "./NotificationService";
+import { ChevronLeft } from "lucide-react"; // ✅ Icon import
 
 function NotificationPage() {
   const [notifications, setNotifications] = useState([]);
@@ -43,6 +44,16 @@ function NotificationPage() {
   return (
     <div className="min-h-screen bg-blue-100 p-6">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
+
+        {/* 🔙 Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-6"
+        >
+          <ChevronLeft size={20} className="mr-2" />
+          Back
+        </button>
+
         <h1 className="text-3xl font-bold mb-6 text-blue-800">
           🔔 Notifications
         </h1>
