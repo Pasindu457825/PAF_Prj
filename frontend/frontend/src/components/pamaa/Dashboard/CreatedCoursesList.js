@@ -62,6 +62,57 @@ const CreatedCoursesList = ({ createdCourses, onCourseDeleted }) => {
     };
   };
   
+  // Color themes for course cards to add variety
+  const cardThemes = [
+    {
+      gradient: "from-blue-500 to-blue-600",
+      accent: "blue-700",
+      iconColor: "text-blue-500",
+      hoverBorder: "hover:border-blue-300",
+      deleteHover: "hover:text-red-600 hover:border-red-300 hover:bg-red-50"
+    },
+    {
+      gradient: "from-purple-500 to-purple-600",
+      accent: "purple-700",
+      iconColor: "text-purple-500",
+      hoverBorder: "hover:border-purple-300",
+      deleteHover: "hover:text-red-600 hover:border-red-300 hover:bg-red-50"
+    },
+    {
+      gradient: "from-green-500 to-green-600",
+      accent: "green-700",
+      iconColor: "text-green-500",
+      hoverBorder: "hover:border-green-300",
+      deleteHover: "hover:text-red-600 hover:border-red-300 hover:bg-red-50"
+    },
+    {
+      gradient: "from-indigo-500 to-indigo-600",
+      accent: "indigo-700",
+      iconColor: "text-indigo-500",
+      hoverBorder: "hover:border-indigo-300",
+      deleteHover: "hover:text-red-600 hover:border-red-300 hover:bg-red-50"
+    },
+    {
+      gradient: "from-teal-500 to-teal-600",
+      accent: "teal-700",
+      iconColor: "text-teal-500",
+      hoverBorder: "hover:border-teal-300",
+      deleteHover: "hover:text-red-600 hover:border-red-300 hover:bg-red-50"
+    },
+    {
+      gradient: "from-pink-500 to-pink-600",
+      accent: "pink-700",
+      iconColor: "text-pink-500",
+      hoverBorder: "hover:border-pink-300",
+      deleteHover: "hover:text-red-600 hover:border-red-300 hover:bg-red-50"
+    }
+  ];
+  
+  // Assign a theme based on the index or course ID
+  const getThemeForCourse = (index) => {
+    return cardThemes[index % cardThemes.length];
+  };
+  
   return (
     <div className="bg-white rounded-lg shadow p-6 border border-gray-100">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -90,19 +141,21 @@ const CreatedCoursesList = ({ createdCourses, onCourseDeleted }) => {
 
       {coursesArray.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {coursesArray.map(course => {
+          {coursesArray.map((course, index) => {
             const stats = getRandomStats();
+            const theme = getThemeForCourse(index);
+            
             return (
               <div key={course.id} className="border border-gray-200 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col group bg-white">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-5 text-white relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-400 rounded-full opacity-20 -translate-y-6 translate-x-6"></div>
-                  <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-400 rounded-full opacity-20 translate-y-6 -translate-x-6"></div>
+                <div className={`bg-gradient-to-r ${theme.gradient} p-5 text-white relative overflow-hidden`}>
+                  <div className={`absolute top-0 right-0 w-24 h-24 bg-${theme.accent} rounded-full opacity-20 -translate-y-6 translate-x-6`}></div>
+                  <div className={`absolute bottom-0 left-0 w-16 h-16 bg-${theme.accent} rounded-full opacity-20 translate-y-6 -translate-x-6`}></div>
                   
                   <h3 className="font-bold text-xl text-white mb-1 relative z-10 pr-6 truncate">
                     {course.title}
                   </h3>
                   <div className="flex items-center gap-2 opacity-90 text-sm relative z-10">
-                    <span className="font-medium bg-blue-700 bg-opacity-30 px-2 py-1 rounded">
+                    <span className={`font-medium bg-${theme.accent} bg-opacity-30 px-2 py-1 rounded`}>
                       {course.units ? course.units.length : 0} {course.units && course.units.length === 1 ? 'Unit' : 'Units'}
                     </span>
                   </div>
@@ -115,17 +168,17 @@ const CreatedCoursesList = ({ createdCourses, onCourseDeleted }) => {
                   
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="flex items-center gap-2 text-gray-600">
-                      <User size={16} className="text-blue-500" />
+                      <User size={16} className={theme.iconColor} />
                       <span className="text-sm">{stats.students} students</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
-                      <Clock size={16} className="text-blue-500" />
+                      <Clock size={16} className={theme.iconColor} />
                       <span className="text-sm">{stats.duration}</span>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-2 text-gray-600 text-sm">
-                    <Calendar size={16} className="text-blue-500" />
+                    <Calendar size={16} className={theme.iconColor} />
                     <span>Last updated: {stats.lastUpdated}</span>
                   </div>
                 </div>
@@ -134,7 +187,7 @@ const CreatedCoursesList = ({ createdCourses, onCourseDeleted }) => {
                   <div className="flex flex-wrap gap-2 justify-between">
                     <Link 
                       to={`/courses/${course.id}`} 
-                      className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+                      className={`flex items-center gap-1 ${theme.iconColor} hover:${theme.iconColor.replace('500', '800')} text-sm font-medium transition-colors`}
                     >
                       <span>View Course</span>
                       <ChevronRight size={16} />
@@ -142,7 +195,7 @@ const CreatedCoursesList = ({ createdCourses, onCourseDeleted }) => {
                     
                     <div className="flex gap-2">
                       <button 
-                        className="flex items-center gap-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1 rounded-md text-sm transition-colors"
+                        className={`flex items-center gap-1 bg-white border border-gray-300 hover:bg-gray-50 ${theme.hoverBorder} text-gray-700 px-3 py-1 rounded-md text-sm transition-colors`}
                         onClick={() => handleEditCourse(course.id, course.title)}
                         aria-label={`Edit ${course.title}`}
                         title="Edit course content, title, and units"
@@ -151,7 +204,7 @@ const CreatedCoursesList = ({ createdCourses, onCourseDeleted }) => {
                         <span>Edit</span>
                       </button>
                       <button 
-                        className="flex items-center gap-1 bg-white border border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-600 text-gray-700 px-3 py-1 rounded-md text-sm transition-colors"
+                        className={`flex items-center gap-1 bg-white border border-gray-300 ${theme.deleteHover} text-gray-700 px-3 py-1 rounded-md text-sm transition-colors`}
                         onClick={() => handleDeleteCourse(course.id, course.title)}
                         disabled={loading && processingCourseId === course.id}
                         aria-label={`Delete ${course.title}`}
