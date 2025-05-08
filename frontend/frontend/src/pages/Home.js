@@ -24,6 +24,14 @@ const Home = () => {
           >
             📋 View Users
           </Link>
+
+          {/* ✅ New Button to Browse Groups */}
+          <Link
+            to="/groups/view"
+            className="block w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 rounded transition"
+          >
+            🌍 Browse Groups
+          </Link>
         </div>
       </div>
     </div>
