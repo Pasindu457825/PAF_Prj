@@ -46,6 +46,7 @@ const MyProfile = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("user");
+    window.dispatchEvent(new Event("storage")); // ✅ notify navbar to re-render
     navigate("/login");
   };
 
