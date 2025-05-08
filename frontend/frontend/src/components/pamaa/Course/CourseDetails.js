@@ -11,6 +11,7 @@ import {
   findEnrollment,
 } from "../../../services/enrollmentService";
 import { FiDownload, FiFile, FiTag, FiBook, FiClock, FiUser, FiLayers, FiChevronRight, FiAward } from "react-icons/fi";
+import Swal from "sweetalert2";
 import "./Course.css";
 
 const CourseDetails = () => {
@@ -85,23 +86,57 @@ const CourseDetails = () => {
   };
 
   const handleDeleteCourse = async () => {
-    if (
-      !window.confirm("Are you sure you want to delete this course?")
-    ) {
-      return;
-    }
+    // Use SweetAlert2 for confirmation dialog
+    const result = await Swal.fire({
+      title: "Delete Course",
+      text: "Are you sure you want to delete this course? This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel"
+    });
 
-    try {
-      await deleteCourse(courseId, user.id);
-      navigate("/dashboard", {
-        state: {
-          courseDeleted: true,
-          courseTitle: course.title,
-        },
-      });
-    } catch (err) {
-      setError("Failed to delete course");
-      console.error(err);
+    // If confirmed, proceed with deletion
+    if (result.isConfirmed) {
+      try {
+        await deleteCourse(courseId, user.id);
+        
+        // Show success toast notification
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: `Course "${course.title}" deleted successfully`,
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+        
+        // Navigate to dashboard with state intact
+        navigate("/dashboard", {
+          state: {
+            courseDeleted: true,
+            courseTitle: course.title,
+          },
+        });
+      } catch (err) {
+        // Show error toast notification
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: "Failed to delete course",
+          text: "Please try again later",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+        
+        setError("Failed to delete course");
+        console.error(err);
+      }
     }
   };
 
