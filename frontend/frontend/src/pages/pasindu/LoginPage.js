@@ -14,12 +14,13 @@ const Login = () => {
   // In real app, these would be imported from react-router-dom and axios/sweetalert2
   const navigate = useNavigate();
 
-  
-
-const handleLoginRequest = async (credentials) => {
-  const response = await axios.post("http://localhost:8080/api/auth/login", credentials);
-  return response.data;
-};
+  const handleLoginRequest = async (credentials) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/login",
+      credentials
+    );
+    return response.data;
+  };
 
   const showAlert = (config) => console.log("Alert:", config);
 
@@ -59,6 +60,7 @@ const handleLoginRequest = async (credentials) => {
       localStorage.setItem("userId", userData.id);
       localStorage.setItem("loginTime", new Date().toISOString());
       sessionStorage.setItem("user", JSON.stringify(userData));
+      window.dispatchEvent(new Event("storage"));
 
       // Success alert
       showAlert({
@@ -182,12 +184,12 @@ const handleLoginRequest = async (credentials) => {
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing In...
+                  Logging In...
                 </>
               ) : (
                 <>
                   <LogIn size={18} className="mr-2" />
-                  Sign In
+                  Log In
                 </>
               )}
             </button>
