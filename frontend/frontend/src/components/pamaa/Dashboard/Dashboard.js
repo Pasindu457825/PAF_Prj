@@ -44,6 +44,63 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("enrolled");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Certificate color themes - similar to course card themes but with different colors
+  const certificateThemes = [
+    {
+      gradient: "from-indigo-500 to-blue-500",
+      mainBg: "from-gray-50 to-indigo-50",
+      iconColor: "text-indigo-600",
+      buttonGradient: "from-indigo-600 to-blue-600",
+      buttonHoverGradient: "from-indigo-700 to-blue-700",
+      borderColor: "border-indigo-200"
+    },
+    {
+      gradient: "from-purple-500 to-violet-500",
+      mainBg: "from-gray-50 to-purple-50",
+      iconColor: "text-purple-600",
+      buttonGradient: "from-purple-600 to-violet-600",
+      buttonHoverGradient: "from-purple-700 to-violet-700",
+      borderColor: "border-purple-200"
+    },
+    {
+      gradient: "from-emerald-500 to-green-500",
+      mainBg: "from-gray-50 to-emerald-50",
+      iconColor: "text-emerald-600",
+      buttonGradient: "from-emerald-600 to-green-600",
+      buttonHoverGradient: "from-emerald-700 to-green-700",
+      borderColor: "border-emerald-200"
+    },
+    {
+      gradient: "from-amber-500 to-yellow-500",
+      mainBg: "from-gray-50 to-amber-50",
+      iconColor: "text-amber-600",
+      buttonGradient: "from-amber-600 to-yellow-600",
+      buttonHoverGradient: "from-amber-700 to-yellow-700",
+      borderColor: "border-amber-200"
+    },
+    {
+      gradient: "from-rose-500 to-pink-500",
+      mainBg: "from-gray-50 to-rose-50",
+      iconColor: "text-rose-600",
+      buttonGradient: "from-rose-600 to-pink-600",
+      buttonHoverGradient: "from-rose-700 to-pink-700",
+      borderColor: "border-rose-200"
+    },
+    {
+      gradient: "from-cyan-500 to-teal-500",
+      mainBg: "from-gray-50 to-cyan-50",
+      iconColor: "text-cyan-600",
+      buttonGradient: "from-cyan-600 to-teal-600",
+      buttonHoverGradient: "from-cyan-700 to-teal-700",
+      borderColor: "border-cyan-200"
+    }
+  ];
+
+  // Assign a theme based on the index
+  const getThemeForCertificate = (index) => {
+    return certificateThemes[index % certificateThemes.length];
+  };
+
   // Check if we're coming from course creation with a new course
   useEffect(() => {
     if (location.state?.newCourseCreated) {
@@ -431,34 +488,38 @@ const Dashboard = () => {
                 <div className="p-6">
                   {certificates.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {certificates.map((certificate) => (
-                        <motion.div
-                          key={certificate.id}
-                          className="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-xl overflow-hidden border border-gray-200 shadow-sm transition-all hover:shadow-md"
-                          whileHover={{ y: -4, boxShadow: "0 12px 24px -8px rgba(79, 70, 229, 0.15)", transition: { duration: 0.2 } }}
-                        >
-                          <div className="h-3 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
-                          <div className="p-6 relative">
-                            <div className="absolute top-4 right-4 flex items-center">
-                              <Award className="w-8 h-8 text-indigo-600 opacity-30" />
+                      {certificates.map((certificate, index) => {
+                        const theme = getThemeForCertificate(index);
+                        
+                        return (
+                          <motion.div
+                            key={certificate.id}
+                            className={`bg-gradient-to-br ${theme.mainBg} rounded-xl overflow-hidden border ${theme.borderColor} shadow-sm transition-all hover:shadow-md`}
+                            whileHover={{ y: -4, boxShadow: "0 12px 24px -8px rgba(79, 70, 229, 0.15)", transition: { duration: 0.2 } }}
+                          >
+                            <div className={`h-3 bg-gradient-to-r ${theme.gradient}`}></div>
+                            <div className="p-6 relative">
+                              <div className="absolute top-4 right-4 flex items-center">
+                                <Award className={`w-8 h-8 ${theme.iconColor} opacity-30`} />
+                              </div>
+                              <h3 className="font-semibold text-lg text-gray-800 mb-3">
+                                {certificate.course?.title || "This course has been deleted"}
+                              </h3>
+                              <div className="flex items-center space-x-2 mb-4 text-sm text-gray-600">
+                                <Calendar className={`w-4 h-4 ${theme.iconColor}`} />
+                                <span>Issued: {new Date(certificate.issueDate).toLocaleDateString()}</span>
+                              </div>
+                              <a
+                                href={`/certificates/${certificate.id}`}
+                                className={`flex items-center justify-center gap-2 bg-gradient-to-r ${theme.buttonGradient} hover:${theme.buttonHoverGradient} text-white py-2.5 px-4 rounded-lg transition-all w-full mt-2 shadow-sm`}
+                              >
+                                <Award className="w-4 h-4" />
+                                <span>View Certificate</span>
+                              </a>
                             </div>
-                            <h3 className="font-semibold text-lg text-gray-800 mb-3">
-                              {certificate.course?.title || "This course has been deleted"}
-                            </h3>
-                            <div className="flex items-center space-x-2 mb-4 text-sm text-gray-600">
-                              <Calendar className="w-4 h-4 text-indigo-500" />
-                              <span>Issued: {new Date(certificate.issueDate).toLocaleDateString()}</span>
-                            </div>
-                            <a
-                              href={`/certificates/${certificate.id}`}
-                              className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white py-2.5 px-4 rounded-lg transition-all w-full mt-2 shadow-sm"
-                            >
-                              <Award className="w-4 h-4" />
-                              <span>View Certificate</span>
-                            </a>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-16 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border border-dashed border-gray-300">
