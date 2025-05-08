@@ -3,8 +3,8 @@ package com.paf_grp.backend.model.tharusha;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.List;
+import com.paf_grp.backend.model.isuri.Comment; // Add this import in your Post class
+import java.util.*;
 
 @Document(collection = "post")
 public class Post {
@@ -20,6 +20,8 @@ public class Post {
     private Date createdAt;
     private Date updatedAt;
 
+    private Set<String> likes = new HashSet<>(); // Store user IDs who liked the post
+    private List<Comment> comments = new ArrayList<>();
     // No-args constructor (required by Spring)
     public Post() {
     }
@@ -93,4 +95,21 @@ public class Post {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    // Getter and Setter for likes
+    public Set<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<String> likes) {
+        this.likes = likes;
+    }
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
 }
