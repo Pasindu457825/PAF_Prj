@@ -1,5 +1,8 @@
 package com.paf_grp.backend.model.pasindu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,7 +17,8 @@ public class User {
     private String lastName;
     private String username;
     private String password;
-    private String profileImage; // ✅ New field for Firebase photo URL
+    private String profileImage;
+    private List<String> followedUsers = new ArrayList<>();
 
     // Constructors
     public User() {
@@ -84,5 +88,13 @@ public class User {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public List<String> getFollowedUsers() {
+        return followedUsers;
+    }
+
+    public void setFollowedUsers(List<String> followedUsers) {
+        this.followedUsers = followedUsers;
     }
 }
