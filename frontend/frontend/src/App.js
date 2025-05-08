@@ -3,6 +3,7 @@ import { Routes, BrowserRouter, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import { AuthProvider } from "./context/AuthContext"; // Import the correct export
 
+
 //user
 import CreateUser from "./pages/pasindu/CreateUser";
 import UserList from "./pages/pasindu/UsersList";
@@ -44,7 +45,8 @@ import CourseView from "./components/pamaa/Course/CourseView";
 import CertificateDownload from "./components/pamaa/Certificate/CertificateDownload";
 import CertificatesList from "./components/pamaa/Certificate/CertificatesList";
 import Dashboard from "./components/pamaa/Dashboard/Dashboard";
-import LearningLayout from "./components/pamaa/LearningLayout"; // import this
+import LearningLayout from "./components/pamaa/LearningLayout";
+import  Footer  from "./components/pamaa/Footer";
 
 function App() {
   return (
@@ -101,6 +103,7 @@ function App() {
             />
           </Route>
         </Routes>
+        <Footer/>
       </BrowserRouter>
     </AuthProvider>
   );
