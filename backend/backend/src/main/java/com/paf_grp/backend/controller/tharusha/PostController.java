@@ -1,6 +1,8 @@
 package com.paf_grp.backend.controller.tharusha;
 
+import com.paf_grp.backend.model.isuri.Notification;
 import com.paf_grp.backend.model.tharusha.Post;
+import com.paf_grp.backend.repository.isuri.NotificationRepository;
 import com.paf_grp.backend.repository.tharusha.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.paf_grp.backend.model.isuri.Comment;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -81,5 +83,74 @@ public class PostController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/{id}/like")
+    public ResponseEntity<Post> toggleLike(@PathVariable String id, Authentication authentication) {
+        String userId = authentication.getName();
+        return postRepository.findById(id).map(post -> {
+            if (post.getLikes().contains(userId)) {
+                post.getLikes().remove(userId);
+            } else {
+                post.getLikes().add(userId);
+                createLikeNotification(id, userId); // Add notification
+            }
+            Post updatedPost = postRepository.save(post);
+            return ResponseEntity.ok(updatedPost);
+        }).orElse(ResponseEntity.notFound().build());
+    }
 
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<Post> addComment(
+            @PathVariable String id,
+            @RequestBody Comment comment,
+            Authentication authentication
+    ) {
+        String userId = authentication.getName();
+        comment.setUserId(userId);
+        comment.setCreatedAt(new Date());
+        comment.setId(String.valueOf(System.currentTimeMillis()));
+
+        return postRepository.findById(id).map(post -> {
+            if (post.getComments() == null) {
+                post.setComments(new ArrayList<>());
+            }
+            post.getComments().add(comment);
+            createCommentNotification(id, userId); // Add notification
+            Post updatedPost = postRepository.save(post);
+            return ResponseEntity.ok(updatedPost);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    private void createLikeNotification(String postId, String likerEmail) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            String message = likerEmail + " liked your post";
+            Notification notification = new Notification(
+                    post.getUserId(),
+                    likerEmail,
+                    postId,
+                    "like",
+                    message
+            );
+            notificationRepository.save(notification);
+        }
+    }
+
+    private void createCommentNotification(String postId, String commenterEmail) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            String message = commenterEmail + " commented on your post";
+            Notification notification = new Notification(
+                    post.getUserId(),
+                    commenterEmail,
+                    postId,
+                    "comment",
+                    message
+            );
+            notificationRepository.save(notification);
+        }
+    }
 }

@@ -30,6 +30,12 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 //gropus
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
+
+import NotificationPage from './pages/isuri/Notification/NotificationPage'
+//follow
+import AllUsers from "./pages/isuri/Follow/AllUsers";
+import FollowdUsers from "./pages/isuri/Follow/FollowUsers";
+
 // Learning
 import CourseList from "./components/pamaa/Course/CourseList";
 import CourseDetails from "./components/pamaa/Course/CourseDetails";
@@ -40,6 +46,7 @@ import CertificateDownload from "./components/pamaa/Certificate/CertificateDownl
 import CertificatesList from "./components/pamaa/Certificate/CertificatesList";
 import Dashboard from "./components/pamaa/Dashboard/Dashboard";
 import LearningNavBar from "./components/pamaa/LearningNavBar";
+
 
 function App() {
   return (
@@ -74,6 +81,12 @@ function App() {
 
           {/* group chat */}
           <Route path="/groups/chat/:groupId" element={<GroupChat />} />
+
+          {/* notification*/}
+          <Route path="/notificationsPage" element={<NotificationPage />} />
+          <Route path="/allUsers" element={<AllUsers />} />
+          <Route path="/followdUsers" element={<FollowdUsers />} />
+
 
           {/* Learning */}
           <Route
@@ -115,6 +128,7 @@ function App() {
               </>
             }
           />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
