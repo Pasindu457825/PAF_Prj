@@ -96,44 +96,28 @@ const MyProfile = () => {
             <p className="text-sm text-gray-600 mt-1">📧 {user.email}</p>
           </div>
 
-          {/* New My Posts Button */}
-          <button
-            className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition"
-            onClick={() => navigate("/myposts")}
-          >
-            📄 My Posts
-          </button>
-
-          <button
-            className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition"
-            onClick={() => navigate("/courses")}
-          >
-            Online Learning
-          </button>
-
-          <button
-            className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
-            onClick={() => navigate(`/groups/${user.id}`)}
-          >
-            ➕ My Groups
-          </button>
-
-          <button
-            className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition"
-            onClick={() => {
-              sessionStorage.removeItem("user");
-              navigate("/login");
-            }}
-          >
-            Logout
-          </button>
-
-          <button
-            className="mt-4 w-full bg-gray-800 text-white py-2 rounded-md hover:bg-black transition"
-            onClick={handleDelete}
-          >
-            🗑️ Delete Account
-          </button>
+          {/* Profile Info Section */}
+          <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+            👤 Profile Information
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-gray-100 p-4 rounded-xl shadow-sm">
+              <p className="font-semibold text-gray-500">Username</p>
+              <p>{user.username}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-xl shadow-sm">
+              <p className="font-semibold text-gray-500">Email</p>
+              <p>{user.email}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-xl shadow-sm">
+              <p className="font-semibold text-gray-500">First Name</p>
+              <p>{user.firstName}</p>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-xl shadow-sm">
+              <p className="font-semibold text-gray-500">Last Name</p>
+              <p>{user.lastName}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
