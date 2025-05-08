@@ -68,27 +68,6 @@ const MyProfile = () => {
               }}
               className="py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow transition"
             >
-              My Notification
-        </button>
-        <button
-          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
-          onClick={() => navigate("/followUsers")}
-        >
-          My Friend
-        </button>
-        <button
-          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
-          onClick={() => navigate("/allUsers")}
-        >
-          Add Friend
-        </button>
-        <button
-          className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition"
-          onClick={() => {
-            sessionStorage.removeItem("user");
-            navigate("/login");
-          }}
-        >
               🚪 Logout
             </button>
             <button

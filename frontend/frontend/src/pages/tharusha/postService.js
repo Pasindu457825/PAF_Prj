@@ -61,15 +61,10 @@ export const uploadPostWithMedia = async (postData, files) => {
  * Like a post
  *    POST /api/posts/:id/like
  */
-export const likePost = async (postId, userId) => {
-  const response = await axiosInstance.post(
-    `/posts/${postId}/like`,
-    { userId }, // Send userId in request body
-    {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" }, // Explicit content-type
-    }
-  );
+export const likePost = async (postId) => {
+  const response = await axiosInstance.post(`/posts/${postId}/like`, null, {
+    withCredentials: true,
+  });
   return response.data;
 };
 
@@ -77,21 +72,15 @@ export const likePost = async (postId, userId) => {
  * Add a comment to a post
  *    POST /api/posts/:id/comments
  */
-/**
- * Add a comment to a post
- *    POST /api/posts/:id/comments
- */
 export const addComment = async (postId, commentText) => {
   const response = await axiosInstance.post(
     `/posts/${postId}/comments`,
-    { commentText }, // Send just the comment text
-    {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    }
+    { commentText },
+    { withCredentials: true }
   );
   return response.data;
 };
+
 /**
  * Delete a post
  *    DELETE /api/posts/:id
@@ -122,38 +111,4 @@ export const updatePost = async (postId, updatedPostData) => {
     withCredentials: true,
   });
   return response.data;
-};
-const handleLike = async (postId) => {
-  const userId = localStorage.getItem("userId");
-  if (!userId) {
-    alert("You must be logged in to like a post.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/posts/${postId}/like`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setLikedPosts((prev) => ({
-        ...prev,
-        [postId]: data.post.likes.includes(userId),
-      }));
-      setPosts((prev) =>
-        prev.map((post) =>
-          post.id === postId 
-            ? { ...post, likes: data.post.likes } 
-            : post
-        )
-      );
-    }
-  } catch (err) {
-    console.error("Error liking post:", err);
-  }
 };

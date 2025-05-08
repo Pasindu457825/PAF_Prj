@@ -63,39 +63,12 @@ function PostList() {
   }, []);
 
   // 2) Like Handler
-  const handleLike = async (postId) => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (!user) {
-      alert("You must be logged in to like a post.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/posts/${postId}/like`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user.id }),
-      });
-
-      if (response.ok) {
-        const updatedPost = await response.json();
-        setLikedPosts((prev) => ({
-          ...prev,
-          [postId]: updatedPost.likes.includes(user.id),
-        }));
-        setPosts((prev) =>
-          prev.map((post) =>
-            post.id === postId ? { ...post, likes: updatedPost.likes } : post
-          )
-        );
-      } else {
-        console.error("Failed to update like status.");
-      }
-    } catch (err) {
-      console.error("Error liking post:", err);
-    }
+  const handleLike = (postId) => {
+    setLikedPosts((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+    // Normally also call backend to update likes
   };
 
   // 3) Comment input and submit handlers
@@ -221,8 +194,9 @@ function PostList() {
                 {post.mediaUrls.map((url, index) => (
                   <div
                     key={index}
-                    className={`w-full transition-opacity duration-300 ${index === currentSlide[post.id] ? "block" : "hidden"
-                      }`}
+                    className={`w-full transition-opacity duration-300 ${
+                      index === currentSlide[post.id] ? "block" : "hidden"
+                    }`}
                   >
                     {/* Use isVideoUrl helper */}
                     {isVideoUrl(url) ? (
@@ -267,10 +241,11 @@ function PostList() {
                     {post.mediaUrls.map((_, i) => (
                       <div
                         key={i}
-                        className={`h-2 w-2 rounded-full ${i === currentSlide[post.id]
+                        className={`h-2 w-2 rounded-full ${
+                          i === currentSlide[post.id]
                             ? "bg-blue-500"
                             : "bg-gray-300"
-                          }`}
+                        }`}
                       />
                     ))}
                   </div>
@@ -283,15 +258,20 @@ function PostList() {
           <div className="px-4 py-2 flex items-center border-t border-gray-100">
             <button
               onClick={() => handleLike(post.id)}
-              className={`flex items-center mr-6 ${likedPosts[post.id] ? "text-red-500" : "text-gray-500"
-                } hover:text-red-500`}
+              className={`flex items-center mr-6 ${
+                likedPosts[post.id] ? "text-red-500" : "text-gray-500"
+              } hover:text-red-500`}
             >
               <HeartIcon
                 className="h-6 w-6 mr-1"
                 fill={likedPosts[post.id] ? "currentColor" : "none"}
               />
-              <span className="text-sm">
-                {post.likes?.length || 0}
+              <span>
+                {post.likes
+                  ? post.likes.length + (likedPosts[post.id] ? 1 : 0)
+                  : likedPosts[post.id]
+                  ? 1
+                  : 0}
               </span>
             </button>
 
@@ -350,10 +330,11 @@ function PostList() {
                   !commentInputs[post.id] ||
                   !commentInputs[post.id].trim()
                 }
-                className={`ml-2 text-sm font-semibold ${commentInputs[post.id] && commentInputs[post.id].trim()
+                className={`ml-2 text-sm font-semibold ${
+                  commentInputs[post.id] && commentInputs[post.id].trim()
                     ? "text-blue-500 hover:text-blue-600"
                     : "text-blue-300"
-                  }`}
+                }`}
               >
                 Post
               </button>
