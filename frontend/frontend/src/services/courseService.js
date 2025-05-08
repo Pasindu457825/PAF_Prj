@@ -134,12 +134,9 @@ export const getCoursesByAuthor = async (authorId) => {
   try {
     // Add timestamp parameter to prevent caching
     const timestamp = new Date().getTime();
-    const response = await axios.get(
-      `http://localhost:8080/api/author/${authorId}`,
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.get(`${API_URL}/author/${authorId}`, {
+      withCredentials: true,
+    });
     // Ensure we return an array
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
