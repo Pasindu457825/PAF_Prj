@@ -44,10 +44,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(
                             "/api/users/**",
+                            "/details/**",
                             "/api/auth/**",
+
                             "/api/groups/**",
                             "/api/messages/**",// ✅ Add if public
                             "/login"              // Or remove this if unused
+
+                            "/api/notifications/**",
+
                     ).permitAll();
 
                     auth.anyRequest().authenticated();
