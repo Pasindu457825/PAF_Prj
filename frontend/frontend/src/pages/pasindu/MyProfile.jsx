@@ -162,7 +162,7 @@ const MyProfile = () => {
 
             {/* Notifications */}
             <div
-              onClick={() => navigate("/notifications")}
+              onClick={() => navigate("/notificationsPage")}
               className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md cursor-pointer transition-all"
             >
               <div className="flex items-center mb-3">
