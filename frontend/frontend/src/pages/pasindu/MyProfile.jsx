@@ -194,27 +194,26 @@ const MyProfile = () => {
 
           {/* Friend Management */}
           <div className="bg-gray-50 rounded-xl p-6 mb-8">
-            <h3 className="text-lg font-medium text-gray-800 mb-4">
-              Friend Management
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={() => navigate("/followUsers")}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
-              >
-                <Users size={18} />
-                My Friends
-              </button>
-              <button
-                onClick={() => navigate("/allUsers")}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
-              >
-                <UserPlus size={18} />
-                Add Friends
-              </button>
-            </div>
-          </div>
-
+  <h3 className="text-lg font-medium text-gray-800 mb-4">
+    Friend Management
+  </h3>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <button
+      onClick={() => navigate("/followUsers")}
+      className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
+    >
+      <Users size={18} />
+      My Friends
+    </button>
+    <button
+      onClick={() => navigate("/allUsers")}
+      className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
+    >
+      <UserPlus size={18} />
+      Add Friends
+    </button>
+  </div>
+</div>
           {/* Account Actions */}
           <div className="flex flex-col sm:flex-row gap-4 mt-auto">
             <button
