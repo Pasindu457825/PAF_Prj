@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getPostById, likePost, addComment, deletePost } from "./postService";
+import { getPostById, likePost, addComment, deletePost,updateComment,deleteComment } from "./postService";
 
 function PostDetail() {
   const { id } = useParams(); // matches /posts/:id
@@ -9,6 +9,9 @@ function PostDetail() {
   const [error, setError] = useState("");
   const [commentText, setCommentText] = useState("");
   const [isOwner, setIsOwner] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedText, setEditedText] = useState("");
+
 
   // Assume logged-in user stored in sessionStorage
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -63,6 +66,17 @@ function PostDetail() {
       setError("Failed to like post");
     }
   };
+  const handleDelete = async () => {
+    try {
+      await deletePost(id);
+      navigate("/myposts");
+    } catch (err) {
+      console.error("Failed to delete post", err);
+      setError("Failed to delete post");
+    }
+  };
+  // Handle Comment Submit
+    
   // Handle Comment
   const handleComment = async () => {
     if (!commentText.trim()) return;
@@ -75,17 +89,27 @@ function PostDetail() {
       setError("Failed to add comment");
     }
   };
+// Handle Edit Comment,delete Comment
+const handleEditComment = async (commentId) => {
+  try {
+    await updateComment(id, commentId, editedText);
+    setEditingCommentId(null);
+    fetchPost();
+  } catch (err) {
+    console.error("Edit failed", err);
+    setError("Failed to edit comment");
+  }
+};
 
-  // Handle Delete
-  const handleDelete = async () => {
-    try {
-      await deletePost(id);
-      navigate("/myposts"); // or wherever you want to redirect
-    } catch (err) {
-      console.error(err);
-      setError("Failed to delete post");
-    }
-  };
+const handleDeleteComment = async (commentId) => {
+  try {
+    await deleteComment(id, commentId);
+    fetchPost();
+  } catch (err) {
+    console.error("Delete failed", err);
+    setError("Failed to delete comment");
+  }
+};
 
   if (error)
     return (
@@ -144,7 +168,9 @@ function PostDetail() {
                   minute: "2-digit",
                 })}
               </p>
-            </div>
+            </div> 
+
+            
 
             {/* Edit/Delete controls */}
             {isOwner && (
@@ -251,39 +277,82 @@ function PostDetail() {
 
           {/* Comments list */}
           <div className="space-y-4 mb-6">
-            {post.comments && post.comments.length > 0 ? (
-              post.comments.map((comment, idx) => (
-                <div key={idx} className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center mb-1">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-2">
-                      {comment.userId?.charAt(0).toUpperCase() || "U"}
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-800">
-                        {comment.userId || "Anonymous"}
-                      </span>
-                      <span className="text-xs text-gray-500 ml-2">
-                        {new Date(comment.createdAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 pl-10">{comment.commentText}</p>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                No comments yet. Be the first to comment!
-              </div>
-            )}
+          {post.comments && post.comments.length > 0 ? (
+  post.comments.map((comment, idx) => {
+    const commentId = comment._id || comment.id || comment.commentId;
+    console.log("Deleting comment ID:", commentId); // ✅ Add here
+
+
+    return (
+      <div key={commentId} className="bg-gray-50 p-3 rounded-lg">
+        <div className="flex justify-between">
+          <div className="flex items-center mb-1">
+            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-2">
+              {comment.userId?.charAt(0).toUpperCase() || "U"}
+            </div>
+            <div>
+              <span className="font-medium text-gray-800">
+                {comment.userId || "Anonymous"}
+              </span>
+              <span className="text-xs text-gray-500 ml-2">
+                {new Date(comment.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
+          </div>
+
+          {comment.userId === user?.email && (
+            <div className="space-x-2 text-sm">
+              <button
+                onClick={() => {
+                  setEditingCommentId(commentId);
+                  setEditedText(comment.commentText);
+                }}
+                className="text-blue-500 hover:underline"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteComment(commentId)}
+                className="text-red-500 hover:underline"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+
+        {editingCommentId === commentId ? (
+          <div className="mt-2">
+            <input
+              value={editedText}
+              onChange={(e) => setEditedText(e.target.value)}
+              className="border rounded px-2 py-1 w-full mb-2"
+            />
+            <button
+              onClick={() => handleEditComment(commentId)}
+              className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
+            >
+              Save
+            </button>
+          </div>
+        ) : (
+          <p className="text-gray-700 pl-10">{comment.commentText}</p>
+        )}
+      </div>
+    );
+  })
+) : (
+  <div className="text-center py-8 text-gray-500">
+    No comments yet. Be the first to comment!
+  </div>
+)}
+
           </div>
 
           {/* Add comment form */}
