@@ -31,7 +31,7 @@ import GroupNotifications from "./pages/pasindu/user_group/GroupNotifications";
 //gropus
 import GroupChat from "./pages/pasindu/group_chat/GroupChat";
 
-import NotificationPage from "./pages/isuri/Notification/NotificationPage";
+import NotificationPage from './pages/isuri/Notification/NotificationPage'
 //follow
 import AllUsers from "./pages/isuri/Follow/AllUsers";
 import FollowdUsers from "./pages/isuri/Follow/FollowUsers";
@@ -74,33 +74,21 @@ function App() {
             <Route path="/posts/:id" element={<PostDetail />} />
             <Route path="/editpost/:id" element={<EditPost />} />
 
-            {/* Groups */}
-            <Route path="/groups/create" element={<CreateGroupPage />} />
-            <Route path="/groups/:userId" element={<GroupsPage />} />
-            <Route path="/groups/view/:groupId" element={<GroupDetailPage />} />
-            <Route path="/groups/view" element={<ViewGroupsPage />} />
-            <Route path="/notifications" element={<GroupNotifications />} />
-            <Route path="/groups/chat/:groupId" element={<GroupChat />} />
 
-            {/* Notifications & Follows */}
-            <Route path="/notificationsPage" element={<NotificationPage />} />
-            <Route path="/allUsers" element={<AllUsers />} />
-            <Route path="/followdUsers" element={<FollowdUsers />} />
+          {/* group */}
+          <Route path="/groups/create" element={<CreateGroupPage />} />
+          <Route path="/groups/:userId" element={<GroupsPage />} />
+          <Route path="/groups/view/:groupId" element={<GroupDetailPage />} />
+          <Route path="/groups/view" element={<ViewGroupsPage />} />
+          <Route path="/notifications" element={<GroupNotifications />} />
 
-            {/* Learning */}
-            <Route path="/courses" element={<CourseList />} />
-            <Route path="/courses/:courseId" element={<CourseDetails />} />
-            <Route path="/courses/create" element={<CourseCreation />} />
-            <Route path="/courses/edit/:courseId" element={<CourseEdit />} />
-            <Route path="/courses/view/:courseId" element={<CourseView />} />
-
-            <Route path="/dashboard" element={<Dashboard />} />
-
-            <Route path="/certificates" element={<CertificatesList />} />
-            <Route
-              path="/certificates/:certificateId"
-              element={<CertificateDownload />}
-            />
+          {/* group chat */}
+          <Route path="/groups/chat/:groupId" element={<GroupChat />} />
+          {/* notification*/}
+          <Route path="/notificationsPage" element={<NotificationPage />} />
+          <Route path="/allUsers" element={<AllUsers />} />
+          <Route path="/followdUsers" element={<FollowdUsers />} />
+          <Route path="/certificates" element={<CertificatesList />} />
           </Route>
         </Routes>
         <Footer/>

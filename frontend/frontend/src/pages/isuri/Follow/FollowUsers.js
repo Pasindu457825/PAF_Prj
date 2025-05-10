@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 function FollowUsers() {
   const [followedUsers, setFollowedUsers] = useState([]);
   const loggedInUserId = localStorage.getItem('userId');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // First fetch just the IDs of followed users
     fetch(`http://localhost:8080/api/users/${loggedInUserId}/followed`)
       .then((response) => response.json())
       .then((userIds) => {
-        // Then fetch details for all these users
         return fetch(`http://localhost:8080/api/users/details`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -35,8 +36,18 @@ function FollowUsers() {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Followed Users</h1>
+    <div className="min-h-screen p-4 bg-sky-300">
+  {/* Back Button */}
+  <button
+    onClick={() => navigate('/myprofile')}
+    className="flex items-center text-black mb-4 hover:underline"
+  >
+    <ArrowLeft className="mr-2" /> Back
+  </button>
+
+  {/* Title */}
+  <h1 className="text-2xl font-bold text-black mb-4">Followed Users</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {followedUsers.map((user) => (
           <div
