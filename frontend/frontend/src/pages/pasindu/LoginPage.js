@@ -196,15 +196,15 @@ const Login = () => {
           </div>
 
           {/* Divider */}
-          <div className="relative flex items-center justify-center mt-8 mb-6">
+          {/* <div className="relative flex items-center justify-center mt-8 mb-6">
             <div className="border-t border-gray-200 absolute w-full"></div>
             <div className="bg-white px-3 relative text-gray-500 text-sm">
               or
             </div>
-          </div>
+          </div> */}
 
           {/* Social Login Buttons */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <button className="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
               <img
                 src="/api/placeholder/24/24"
@@ -221,7 +221,7 @@ const Login = () => {
               />
               <span className="text-sm font-medium">Facebook</span>
             </button>
-          </div>
+          </div> */}
 
           {/* Sign Up Link */}
           <div className="mt-8 text-center">
