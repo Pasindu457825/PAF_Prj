@@ -1,13 +1,31 @@
 package com.paf_grp.backend.model.isuri;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Date;
 
+@Document(collection = "comments")
 public class Comment {
+
+    @Id
     private String id;
+
+    @Field("userId")
     private String userId;
+
+    @Field("commentText")
     private String commentText;
+
+    @Field("createdAt")
     private Date createdAt;
 
+    // ✅ Default constructor (required by Spring)
+    public Comment() {
+    }
+
+    // ✅ All-args constructor (useful for custom creation)
     public Comment(String id, String userId, String commentText, Date createdAt) {
         this.id = id;
         this.userId = userId;
@@ -15,6 +33,7 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
+    // ✅ Getters and Setters
     public String getId() {
         return id;
     }
@@ -47,4 +66,3 @@ public class Comment {
         this.createdAt = createdAt;
     }
 }
-
