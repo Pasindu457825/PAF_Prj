@@ -9,6 +9,15 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
     return map;
   }, {});
 
+  // Define consistent color scheme for all progress indicators
+  const progressClasses = {
+    bg: "bg-blue-500",
+    lightBg: "bg-blue-50",
+    borderColor: "border-blue-200",
+    textColor: "text-blue-700",
+    hoverBg: "hover:bg-blue-100"
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 my-6 border border-gray-100">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -39,54 +48,15 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
                 ? Math.min(Math.round((completedUnits / totalUnits) * 100), 100)
                 : 0;
             
-            // Determine status class based on progress
-            const getStatusClasses = () => {
-              if (progressPercentage === 100) {
-                return {
-                  bg: "bg-green-500",
-                  lightBg: "bg-green-50",
-                  borderColor: "border-green-200",
-                  textColor: "text-green-700",
-                  hoverBg: "hover:bg-green-100"
-                };
-              } else if (progressPercentage >= 70) {
-                return {
-                  bg: "bg-blue-500",
-                  lightBg: "bg-blue-50",
-                  borderColor: "border-blue-200",
-                  textColor: "text-blue-700",
-                  hoverBg: "hover:bg-blue-100"
-                };
-              } else if (progressPercentage >= 30) {
-                return {
-                  bg: "bg-yellow-500",
-                  lightBg: "bg-yellow-50",
-                  borderColor: "border-yellow-200",
-                  textColor: "text-yellow-700",
-                  hoverBg: "hover:bg-yellow-100"
-                };
-              } else {
-                return {
-                  bg: "bg-orange-500",
-                  lightBg: "bg-orange-50",
-                  borderColor: "border-orange-200",
-                  textColor: "text-orange-700",
-                  hoverBg: "hover:bg-orange-100"
-                };
-              }
-            };
-            
-            const statusClasses = getStatusClasses();
-
             return (
               <div 
                 key={enrollment.id} 
                 className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col"
               >
-                {/* Color bar on top based on progress with subtle gradient */}
+                {/* Color bar on top with consistent blue */}
                 <div className="h-2 bg-gray-100 w-full">
                   <div 
-                    className={`h-full ${statusClasses.bg} bg-gradient-to-r from-current to-current/90`}
+                    className="h-full bg-blue-500 bg-gradient-to-r from-current to-current/90"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
@@ -100,7 +70,7 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
                   {/* Status Badge */}
                   <div className="flex items-center mb-4">
                     <span 
-                      className={`${statusClasses.lightBg} ${statusClasses.textColor} ${statusClasses.borderColor} text-sm font-medium px-3 py-1 rounded-full border flex items-center gap-1`}
+                      className={`${progressClasses.lightBg} ${progressClasses.textColor} ${progressClasses.borderColor} text-sm font-medium px-3 py-1 rounded-full border flex items-center gap-1`}
                     >
                       {progressPercentage === 100 ? (
                         <>
@@ -124,7 +94,7 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
                   {/* Progress Bar */}
                   <div className="h-3 bg-gray-100 rounded-full mb-5 overflow-hidden">
                     <div 
-                      className={`h-full rounded-full ${statusClasses.bg} bg-gradient-to-r from-current to-current/80`}
+                      className="h-full rounded-full bg-blue-500 bg-gradient-to-r from-current to-current/80"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
                   </div>
@@ -161,7 +131,7 @@ const EnrolledCoursesList = ({ enrolledCourses, certificates }) => {
                     hasCertificate ? (
                       <Link
                         to={`/certificates/${certificateMap[course?.id]?.id}`}
-                        className={`flex items-center justify-center w-full py-2 px-4 ${statusClasses.lightBg} ${statusClasses.textColor} rounded-lg border ${statusClasses.borderColor} font-medium ${statusClasses.hoverBg} transition-colors`}
+                        className="flex items-center justify-center w-full py-2 px-4 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 font-medium hover:bg-blue-100 transition-colors"
                       >
                         <Award size={18} className="mr-2" /> View Certificate
                       </Link>
