@@ -66,7 +66,7 @@ export const updateProgress = async (enrollmentId, progressData) => {
 export const findEnrollment = async (userId, courseId) => {
   try {
     const enrollments = await getUserEnrollments(userId);
-    const enrollment = enrollments.find((e) => e.course.id === courseId);
+    const enrollment = enrollments.find((e) => e?.course?.id === courseId);
     if (!enrollment) {
       throw new Error("Enrollment not found");
     }

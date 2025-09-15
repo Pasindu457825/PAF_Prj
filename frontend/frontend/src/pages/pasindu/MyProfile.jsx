@@ -13,9 +13,10 @@ import {
   UserPlus,
   PenTool,
 } from "lucide-react";
-
+import { getUnreadCount } from "../isuri/Notification/NotificationService";
 const MyProfile = () => {
   const [user, setUser] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +27,18 @@ const MyProfile = () => {
       setUser(JSON.parse(storedUser));
     }
   }, [navigate]);
+  
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const count = await getUnreadCount();
+        setUnreadCount(count);
+      } catch (err) {
+        console.error("Failed to fetch unread count", err);
+      }
+    };
+    fetchUnread();
+  }, []);
 
   const handleDelete = async () => {
     if (
@@ -46,6 +59,7 @@ const MyProfile = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("user");
+    window.dispatchEvent(new Event("storage")); // ✅ notify navbar to re-render
     navigate("/login");
   };
 
@@ -162,7 +176,7 @@ const MyProfile = () => {
 
             {/* Notifications */}
             <div
-              onClick={() => navigate("/notifications")}
+              onClick={() => navigate("/notificationsPage")}
               className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md cursor-pointer transition-all"
             >
               <div className="flex items-center mb-3">
@@ -170,7 +184,7 @@ const MyProfile = () => {
                   <Bell size={20} className="text-yellow-600" />
                 </div>
                 <h3 className="ml-3 font-medium text-gray-800">
-                  Notifications
+                  Notifications {unreadCount > 0 && `(${unreadCount})`}
                 </h3>
               </div>
               <p className="text-sm text-gray-500">
@@ -181,27 +195,26 @@ const MyProfile = () => {
 
           {/* Friend Management */}
           <div className="bg-gray-50 rounded-xl p-6 mb-8">
-            <h3 className="text-lg font-medium text-gray-800 mb-4">
-              Friend Management
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={() => navigate("/followUsers")}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
-              >
-                <Users size={18} />
-                My Friends
-              </button>
-              <button
-                onClick={() => navigate("/allUsers")}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
-              >
-                <UserPlus size={18} />
-                Add Friends
-              </button>
-            </div>
-          </div>
-
+  <h3 className="text-lg font-medium text-gray-800 mb-4">
+    Friend Management
+  </h3>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <button
+      onClick={() => navigate("/followUsers")}
+      className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
+    >
+      <Users size={18} />
+      My Friends
+    </button>
+    <button
+      onClick={() => navigate("/allUsers")}
+      className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition-all"
+    >
+      <UserPlus size={18} />
+      Add Friends
+    </button>
+  </div>
+</div>
           {/* Account Actions */}
           <div className="flex flex-col sm:flex-row gap-4 mt-auto">
             <button

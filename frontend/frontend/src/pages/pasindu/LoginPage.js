@@ -14,12 +14,13 @@ const Login = () => {
   // In real app, these would be imported from react-router-dom and axios/sweetalert2
   const navigate = useNavigate();
 
-  
-
-const handleLoginRequest = async (credentials) => {
-  const response = await axios.post("http://localhost:8080/api/auth/login", credentials);
-  return response.data;
-};
+  const handleLoginRequest = async (credentials) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/login",
+      credentials
+    );
+    return response.data;
+  };
 
   const showAlert = (config) => console.log("Alert:", config);
 
@@ -59,6 +60,7 @@ const handleLoginRequest = async (credentials) => {
       localStorage.setItem("userId", userData.id);
       localStorage.setItem("loginTime", new Date().toISOString());
       sessionStorage.setItem("user", JSON.stringify(userData));
+      window.dispatchEvent(new Event("storage"));
 
       // Success alert
       showAlert({
@@ -182,27 +184,27 @@ const handleLoginRequest = async (credentials) => {
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing In...
+                  Logging In...
                 </>
               ) : (
                 <>
                   <LogIn size={18} className="mr-2" />
-                  Sign In
+                  Log In
                 </>
               )}
             </button>
           </div>
 
           {/* Divider */}
-          <div className="relative flex items-center justify-center mt-8 mb-6">
+          {/* <div className="relative flex items-center justify-center mt-8 mb-6">
             <div className="border-t border-gray-200 absolute w-full"></div>
             <div className="bg-white px-3 relative text-gray-500 text-sm">
               or
             </div>
-          </div>
+          </div> */}
 
           {/* Social Login Buttons */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <button className="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
               <img
                 src="/api/placeholder/24/24"
@@ -219,7 +221,7 @@ const handleLoginRequest = async (credentials) => {
               />
               <span className="text-sm font-medium">Facebook</span>
             </button>
-          </div>
+          </div> */}
 
           {/* Sign Up Link */}
           <div className="mt-8 text-center">

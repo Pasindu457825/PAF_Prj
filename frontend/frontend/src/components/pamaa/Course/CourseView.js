@@ -6,37 +6,32 @@ import { findEnrollment, updateProgress } from '../../../services/enrollmentServ
 import { generateCertificate } from '../../../services/certificateService';
 import './Course.css';
 
-// URL detection regex pattern - matches common URL formats
 const urlPattern = /(https?:\/\/[^\s]+)/g;
 
-// Function to convert plain text URLs to clickable links
 const convertUrlsToLinks = (text) => {
   if (!text) return '';
-  return text.split(urlPattern).map((part, i) => {
-    // Check if this part matches our URL pattern
-    if (part.match(urlPattern)) {
-      return (
-        <a 
-          key={i}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="course-content-link"
-        >
-          {part}
-        </a>
-      );
-    }
-    // Return regular text
-    return part;
-  });
+  return text.split(urlPattern).map((part, i) =>
+    part.match(urlPattern) ? (
+      <a
+        key={i}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="course-content-link underline text-blue-600 hover:text-blue-800"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  );
 };
 
 const CourseView = () => {
   const { courseId } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [course, setCourse] = useState(null);
   const [units, setUnits] = useState([]);
   const [enrollment, setEnrollment] = useState(null);
@@ -47,28 +42,25 @@ const CourseView = () => {
   const [generatingCertificate, setGeneratingCertificate] = useState(false);
 
   useEffect(() => {
-    const fetchCourseAndEnrollment = async () => {
+    const fetchData = async () => {
       try {
-        // Get course details, units, and enrollment data
         const [courseData, unitsData, enrollmentData] = await Promise.all([
           getCourseById(courseId),
           getCourseUnits(courseId),
           findEnrollment(user.id, courseId)
         ]);
-        
+
         setCourse(courseData);
         setUnits(unitsData);
         setEnrollment(enrollmentData);
-        
-        // Set current unit to last completed unit + 1, or 0 if none completed
+
         setCurrentUnitIndex(Math.min(enrollmentData.lastCompletedUnit + 1, unitsData.length - 1));
-        
-        // Check if already completed
+
         if (enrollmentData.completed) {
-          setCompletionMessage('You have completed this course!');
+          setCompletionMessage('🎉 You have completed this course!');
         }
       } catch (error) {
-        console.error('Error fetching course data:', error);
+        console.error('Error loading data:', error);
         setError('Failed to load course. Please try again.');
       } finally {
         setLoading(false);
@@ -76,118 +68,106 @@ const CourseView = () => {
     };
 
     if (user) {
-      fetchCourseAndEnrollment();
+      fetchData();
     }
   }, [courseId, user]);
 
   const handleNext = async () => {
-    if (currentUnitIndex < units.length - 1) {
-      // Update progress
-      try {
-        await updateProgress(enrollment.id, { unitIndex: currentUnitIndex });
-        // Move to next unit
+    try {
+      await updateProgress(enrollment.id, { unitIndex: currentUnitIndex });
+      if (currentUnitIndex < units.length - 1) {
         setCurrentUnitIndex(currentUnitIndex + 1);
-      } catch (error) {
-        console.error('Error updating progress:', error);
-        setError('Failed to update progress.');
-      }
-    } else {
-      // This is the last unit, complete the course
-      try {
-        const updatedEnrollment = await updateProgress(enrollment.id, { unitIndex: currentUnitIndex });
-        setEnrollment(updatedEnrollment);
-        
-        // Show completion message
-        if (updatedEnrollment.completed) {
-          setCompletionMessage('Congratulations! You have completed this course!');
+      } else {
+        const updated = await updateProgress(enrollment.id, { unitIndex: currentUnitIndex });
+        setEnrollment(updated);
+        if (updated.completed) {
+          setCompletionMessage('🎉 Congratulations! You have completed this course!');
         }
-      } catch (error) {
-        console.error('Error completing course:', error);
-        setError('Failed to complete course.');
       }
+    } catch (error) {
+      console.error('Progress update failed:', error);
+      setError('Failed to update progress.');
     }
   };
 
   const handleGenerateCertificate = async () => {
     setGeneratingCertificate(true);
     try {
-      const certificate = await generateCertificate(user.id, courseId);
-      navigate(`/certificates/${certificate.id}`);
+      const cert = await generateCertificate(user.id, courseId);
+      navigate(`/certificates/${cert.id}`);
     } catch (error) {
-      console.error('Error generating certificate:', error);
+      console.error('Certificate generation failed:', error);
       setError('Failed to generate certificate.');
     } finally {
       setGeneratingCertificate(false);
     }
   };
 
-  if (loading) {
-    return <div className="loading-indicator">Loading course content...</div>;
-  }
-
-  if (error) {
-    return <div className="error-message">{error}</div>;
-  }
-
-  if (!course || !units.length || !enrollment) {
-    return <div className="error-message">Course not found or not enrolled</div>;
-  }
+  if (loading) return <div className="text-center py-10 text-gray-600">Loading course content...</div>;
+  if (error) return <div className="bg-red-100 text-red-700 p-4 rounded my-4">{error}</div>;
+  if (!course || !units.length || !enrollment) return <div className="text-center text-gray-500">Course not found or not enrolled.</div>;
 
   const currentUnit = units[currentUnitIndex];
   const progress = Math.round(((currentUnitIndex + 1) / units.length) * 100);
 
   return (
-    <div className="course-view">
-      <div className="course-view-header">
-        <h1>{course.title}</h1>
-        <div className="course-progress">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-          <span className="progress-text">
-            {currentUnitIndex + 1} of {units.length} units completed ({progress}%)
-          </span>
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      <h1 className="text-4xl font-bold text-gray-900 mb-4">{course.title}</h1>
+
+      <div className="mb-6">
+        <div className="w-full bg-gray-200 rounded-full h-3">
+          <div
+            className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          ></div>
         </div>
+        <p className="text-sm text-gray-600 mt-2">
+          {currentUnitIndex + 1} of {units.length} units completed ({progress}%)
+        </p>
       </div>
-      
+
       {completionMessage ? (
-        <div className="course-completion">
-          <div className="completion-message">{completionMessage}</div>
-          <button 
-            className="btn-generate-certificate"
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
+          <p className="text-green-600 text-lg font-semibold mb-4">{completionMessage}</p>
+          <button
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition"
             onClick={handleGenerateCertificate}
             disabled={generatingCertificate}
           >
-            {generatingCertificate ? 'Generating...' : 'Get Your Certificate'}
+            {generatingCertificate ? 'Generating...' : '🎓 Get Your Certificate'}
           </button>
         </div>
       ) : (
-        <div className="unit-content">
-          <h2>{currentUnit.title}</h2>
-          <div className="unit-text">
-            {currentUnit.content.split('\n').map((paragraph, index) => (
-              <p key={index}>{convertUrlsToLinks(paragraph)}</p>
+        <div className="bg-white rounded-xl shadow-md p-8 transition-all hover:shadow-lg">
+          <h2 className="text-2xl font-semibold text-blue-700 mb-4 flex items-center">
+            📘 {currentUnit.title}
+          </h2>
+
+          <div className="text-gray-700 text-[17px] leading-relaxed space-y-4 mb-6">
+            {currentUnit.content.split('\n').map((p, i) => (
+              <p key={i}>{convertUrlsToLinks(p)}</p>
             ))}
           </div>
-          
-          <div className="unit-navigation">
-            {currentUnitIndex > 0 && (
-              <button 
-                className="btn-prev"
+
+          <hr className="my-6" />
+
+          <div className="flex justify-between">
+            {currentUnitIndex > 0 ? (
+              <button
                 onClick={() => setCurrentUnitIndex(currentUnitIndex - 1)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md font-medium transition"
               >
-                Previous
+                ◀ Previous
               </button>
+            ) : (
+              <div />
             )}
-            
-            <button 
-              className="btn-next"
+
+            <button
               onClick={handleNext}
+              className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition"
             >
-              {currentUnitIndex < units.length - 1 ? 'Next' : 'Complete Course'}
+              {currentUnitIndex < units.length - 1 ? 'Next ▶' : '🎓 Complete Course'}
             </button>
           </div>
         </div>
